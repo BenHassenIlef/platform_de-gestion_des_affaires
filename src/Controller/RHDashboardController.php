@@ -44,7 +44,7 @@ class RHDashboardController extends AbstractController
     }
 
     #[Route('/rh/add-opportunity', name: 'rh_add_opportunity', methods: ['POST'])]
-    public function addOpportunity(Request $request, EntityManagerInterface $entityManager): Response
+    public function addOpportunity(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
     {
         $opportunity = new Opportunity();
         $opportunity->setName($request->request->get('opportunityName'));
@@ -54,13 +54,44 @@ class RHDashboardController extends AbstractController
         $opportunity->setCloseDate(new \DateTime($request->request->get('closeDate')));
         $opportunity->setDescription($request->request->get('description') ?: '');
         $opportunity->setStatus('en cours');
-        $opportunity->setNotifiedToAdmin(false);
         $opportunity->setCreatedBy($this->getUser());
+        
+        // Check if admin should be informed immediately
+        $informAdmin = $request->request->has('informAdmin');
+        $opportunity->setNotifiedToAdmin($informAdmin);
 
         $entityManager->persist($opportunity);
         $entityManager->flush();
+        
+        // Send email to admin if checkbox is checked
+        if ($informAdmin) {
+            try {
+                $email = (new Email())
+                    //->from($this->getParameter('app.email_sender'))
+                    //->to('benhassenilef20@gmail.com')
+                    ->from('benhassenilef20@gmail.com')
+                    ->to('benhassenilef20@gmail.com')
+                    ->subject('RH Notification - New Opportunity Created')
+                    ->html($this->renderView('emails/rh_new_opportunity.html.twig', [
+                        'rh_user' => $this->getUser(),
+                        'opportunities' => [$opportunity]
+                    ]));
 
-        $this->addFlash('success', 'Opportunity added successfully!');
+                error_log('Attempting to send email to admin@gmail.com');
+                $mailer->send($email);
+                error_log('Email sent successfully!');
+                $this->addFlash('success', 'Opportunity created and administrator has been notified!');
+            } catch (\Exception $e) {
+                error_log('Email error: ' . $e->getMessage());
+                error_log('Email error details: ' . $e->getTraceAsString());
+                $this->addFlash('success', 'Opportunity created successfully!');
+                $this->addFlash('warning', 'Admin notification email could not be sent. Error: ' . $e->getMessage());
+                $this->addFlash('info', 'Please check email configuration in .env.local or contact system administrator.');
+            }
+        } else {
+            $this->addFlash('success', 'Opportunity added successfully!');
+        }
+        
         return $this->redirectToRoute('rh_home');
     }
 
@@ -92,7 +123,7 @@ class RHDashboardController extends AbstractController
     }
 
     #[Route('/rh/edit-opportunity/{id}', name: 'rh_edit_opportunity', methods: ['POST'])]
-    public function editOpportunity(int $id, Request $request, OpportunityRepository $opportunityRepository, EntityManagerInterface $entityManager): Response
+    public function editOpportunity(int $id, Request $request, OpportunityRepository $opportunityRepository, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
     {
         $opportunity = $opportunityRepository->find($id);
         if (!$opportunity) {
@@ -105,10 +136,42 @@ class RHDashboardController extends AbstractController
         $opportunity->setValue((int)$request->request->get('opportunityValue'));
         $opportunity->setCloseDate(new \DateTime($request->request->get('closeDate')));
         $opportunity->setDescription($request->request->get('description') ?: '');
-
+        
+        // Check if admin should be informed
+        $wasNotified = $opportunity->getNotifiedToAdmin();
+        $shouldNotify = $request->request->has('informAdmin');
+        $opportunity->setNotifiedToAdmin($shouldNotify);
+        
         $entityManager->flush();
+        
+        // Send email to admin if checkbox is checked and wasn't previously notified
+        if ($shouldNotify && !$wasNotified) {
+            try {
+                $email = (new Email())
+                    ->from($this->getParameter('app.email_sender'))
+                    ->to($this->getParameter('app.admin_email'))
+                    ->subject('RH Notification - Updated Opportunity')
+                    ->html($this->renderView('emails/rh_opportunity_update.html.twig', [
+                        'rh_user' => $this->getUser(),
+                        'opportunities' => [$opportunity]
+                    ]));
 
-        return new JsonResponse(['success' => true]);
+                error_log('Attempting to send email to admin@gmail.com');
+                $mailer->send($email);
+                error_log('Email sent successfully!');
+                return new JsonResponse(['success' => true, 'message' => 'Opportunity updated and administrator has been notified!']);
+            } catch (\Exception $e) {
+                error_log('Email error: ' . $e->getMessage());
+                error_log('Email error details: ' . $e->getTraceAsString());
+                return new JsonResponse([
+                    'success' => true, 
+                    'message' => 'Opportunity updated successfully!',
+                    'warning' => 'Admin notification email could not be sent. Please check email configuration or contact system administrator.'
+                ]);
+            }
+        }
+
+        return new JsonResponse(['success' => true, 'message' => 'Opportunity updated successfully!']);
     }
 
     #[Route('/rh/profile', name: 'rh_profile', methods: ['GET', 'POST'])]
@@ -175,8 +238,8 @@ class RHDashboardController extends AbstractController
     {
         try {
             $email = (new Email())
-                ->from('noreply@example.com')
-                ->to('admin@gmail.com')
+                ->from($this->getParameter('app.email_sender'))
+                ->to($this->getParameter('app.admin_email'))
                 ->subject('Test Email from RH System')
                 ->html('<h1>Test Email</h1><p>This is a test email from the RH system.</p>');
 
@@ -212,8 +275,8 @@ class RHDashboardController extends AbstractController
         // Envoyer un email à l'administrateur
         try {
             $email = (new Email())
-                ->from('noreply@example.com')
-                ->to('admin@gmail.com') // Email de l'administrateur
+                ->from($this->getParameter('app.email_sender'))
+                ->to($this->getParameter('app.admin_email'))
                 ->subject('RH Notification - New Opportunities Available')
                 ->html($this->renderView('emails/rh_inform_notification.html.twig', [
                     'rh_user' => $user,
@@ -227,10 +290,11 @@ class RHDashboardController extends AbstractController
             $this->addFlash('success', 'Bien reçu ! Les opportunités ont été envoyées à l\'administrateur.');
         } catch (\Exception $e) {
             error_log('Email error: ' . $e->getMessage());
-            error_log('Email error details: ' . $e->getTraceAsString());
-            $this->addFlash('success', 'Bien reçu ! Les opportunités ont été envoyées à l\'administrateur. (Email non envoyé: ' . $e->getMessage() . ')');
+                error_log('Email error details: ' . $e->getTraceAsString());
+                $this->addFlash('warning', 'Les opportunités ont été marquées comme notifiées, mais l\'email n\'a pas pu être envoyé. Erreur: ' . $e->getMessage());
+                $this->addFlash('info', 'Vérifiez la configuration email dans .env.local ou contactez l\'administrateur système.');
         }
 
         return $this->redirectToRoute('rh_home');
     }
-} 
+}

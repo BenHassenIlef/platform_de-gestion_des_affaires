@@ -247,6 +247,17 @@
                         <label for="description">Description</label>
                         <textarea id="description" name="description" rows="4" placeholder="Enter opportunity description (optional)">{{ opportunity.description }}</textarea>
                     </div>
+                    
+                    <div class="form-group full-width" style="margin-top: 15px;">
+                        <label class="checkbox-container" style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="informAdmin" name="informAdmin" style="margin-right: 10px; width: auto;" {% if opportunity.notifiedToAdmin %}checked{% endif %}>
+                            <span style="font-weight: 600; color: #00b4ff;">📧 Inform Administrator immediately</span>
+                        </label>
+                        <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Check this box to notify the administrator about this opportunity right away.</p>
+                        {% if opportunity.notifiedToAdmin %}
+                            <p style="margin-top: 5px; color: #28a745; font-size: 0.9rem; font-weight: 600;">✅ This opportunity has already been notified to the administrator.</p>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-save">
@@ -297,14 +308,24 @@
                     })
                     .then(data => {
                         if (data.success) {
-                            // Afficher le message de succès
+                            // Afficher le message de succès avec le message personnalisé
+                            successMessage.textContent = data.message || '✅ Opportunity updated successfully!';
                             successMessage.style.display = 'block';
                             errorMessage.style.display = 'none';
                             
-                            // Rediriger après 2 secondes
+                            // Afficher le message d'avertissement si présent
+                            if (data.warning) {
+                                errorMessage.textContent = '⚠️ ' + data.warning;
+                                errorMessage.style.display = 'block';
+                                errorMessage.style.backgroundColor = '#fff3cd';
+                                errorMessage.style.color = '#856404';
+                                errorMessage.style.borderColor = '#ffeeba';
+                            }
+                            
+                            // Rediriger après 3 secondes (plus de temps pour lire les avertissements)
                             setTimeout(() => {
                                 window.location.href = '{{ path('rh_home') }}';
-                            }, 2000);
+                            }, 3000);
                         } else {
                             throw new Error(data.error || 'Unknown error');
                         }
@@ -332,4 +353,4 @@
             });
         });
     </script>
-{% endblock %} 
+{% endblock %}

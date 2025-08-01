@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunity Update Notification</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .user-info { background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .opportunity { background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #00b4ff; }
+        .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+        .highlight { color: #00b4ff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Opportunity Update Notification</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Hello Administrator,</h2>
+            
+            <p>A RH user has updated an opportunity and marked it for your attention.</p>
+            
+            <div class="user-info">
+                <h3>👤 RH User Information:</h3>
+                <p><strong>Name:</strong> {{ rh_user.name ?? 'Not specified' }}</p>
+                <p><strong>Email:</strong> {{ rh_user.email }}</p>
+                <p><strong>Role:</strong> RH</p>
+                <p><strong>Update Date:</strong> {{ "now"|date("Y-m-d H:i:s") }}</p>
+            </div>
+            
+            <div class="opportunity">
+                <h3>📋 Updated Opportunity Details:</h3>
+                {% if opportunities|length > 0 %}
+                    {% set opportunity = opportunities[0] %}
+                    <p><strong>Name:</strong> <span class="highlight">{{ opportunity.name }}</span></p>
+                    <p><strong>Company:</strong> {{ opportunity.company }}</p>
+                    <p><strong>Contact Person:</strong> {{ opportunity.contact }}</p>
+                    <p><strong>Value:</strong> {{ opportunity.value }} DT</p>
+                    <p><strong>Deadline:</strong> {{ opportunity.closeDate|date("Y-m-d") }}</p>
+                    {% if opportunity.description %}
+                        <p><strong>Description:</strong> {{ opportunity.description }}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+            
+            <p><strong>Action Required:</strong> Please log into the system to review this updated opportunity.</p>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated notification from the HR Management System.</p>
+            <p>Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

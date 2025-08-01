@@ -30,10 +30,10 @@ class SendTestEmailCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $email = (new Email())
-            ->from('motez12367@gmail.com') // Use a valid sender email
-            ->to('moetez.b.fredj@gmail.com') // Updated recipient email
-            ->subject('Test Email')
-            ->text('This is a test email.');
+            ->from('benhassenilef20@gmail.com') // Adresse email configurée
+            ->to('admin@gmail.com') // Adresse de l'administrateur
+            ->subject('Test Email - Configuration')
+            ->text('Ceci est un email de test pour vérifier la configuration du mailer.');
 
         try {
             $this->mailer->send($email);

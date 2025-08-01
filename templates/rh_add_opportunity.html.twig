@@ -217,6 +217,14 @@
                         <label for="description">Description</label>
                         <textarea id="description" name="description" rows="4" placeholder="Enter opportunity description (optional)"></textarea>
                     </div>
+                    
+                    <div class="form-group full-width" style="margin-top: 15px;">
+                        <label class="checkbox-container" style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="informAdmin" name="informAdmin" style="margin-right: 10px; width: auto;">
+                            <span style="font-weight: 600; color: #00b4ff;">📧 Inform Administrator immediately</span>
+                        </label>
+                        <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Check this box to notify the administrator about this opportunity right away.</p>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-save">
@@ -225,4 +233,4 @@
             </form>
         </div>
     </div>
-{% endblock %} 
+{% endblock %}

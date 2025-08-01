@@ -22,5 +22,8 @@ services:
       - "../src/Entity/"
       - "../src/Kernel.php"
 
+parameters:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    app.admin_email: 'admin@gmail.com'
+    app.email_sender: 'benhassenilef20@gmail.com'
