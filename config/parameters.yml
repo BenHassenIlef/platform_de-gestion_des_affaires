@@ -1,0 +1,5 @@
+# app/config/parameters.yml
+parameters:
+    # ...
+    mailer_user:     ilefbenhassen20@gmail.com
+    mailer_password: 29/08/2003aoufa

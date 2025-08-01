@@ -1,0 +1,335 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit Opportunity{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .main-container {
+        max-width: 800px;
+        margin: 60px auto 0 auto;
+        padding: 20px;
+    }
+
+    .form-section {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 180, 255, 0.10);
+        padding: 50px 40px;
+        border: 3px solid;
+        border-image: linear-gradient(90deg, #00b4ff 0%, #ffe066 100%) 1;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .form-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #00b4ff 0%, #ffe066 100%);
+    }
+
+    .form-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 40px;
+        text-align: center;
+        letter-spacing: 1.5px;
+        text-shadow: 0 2px 4px rgba(0, 180, 255, 0.1);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 700;
+        color: #00b4ff;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fbff;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #00b4ff;
+        background: #fffbe0;
+        box-shadow: 0 0 0 3px rgba(0, 180, 255, 0.1);
+    }
+
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        color: #222;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(0, 180, 255, 0.2);
+        margin-top: 20px;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 180, 255, 0.3);
+        color: #0077b6;
+    }
+
+    .btn-back {
+        background: #f5f5f5;
+        color: #666;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-back:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+        text-decoration: none;
+        color: #333;
+    }
+
+    .success-message {
+        background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+        display: none;
+    }
+
+    .error-message {
+        background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .main-container {
+            margin: 40px 15px 0 15px;
+            padding: 10px;
+        }
+        
+        .form-section {
+            padding: 30px 20px;
+        }
+        
+        .form-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .form-section {
+            padding: 25px 15px;
+        }
+        
+        .form-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+    
+    <div class="main-container">
+        <a href="{{ path('rh_home') }}" class="btn-back">
+            ← Back to Opportunities
+        </a>
+        
+        <div class="form-section">
+            <h1 class="form-title">✏️ Edit Opportunity</h1>
+            
+            <div class="success-message" id="successMessage">
+                ✅ Opportunity updated successfully!
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                ❌ Error updating opportunity. Please try again.
+            </div>
+            
+            <form method="post" action="{{ path('rh_edit_opportunity', {'id': opportunity.id}) }}" id="opportunityForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="opportunityName">Opportunity Name *</label>
+                        <input type="text" id="opportunityName" name="opportunityName" value="{{ opportunity.name }}" required placeholder="Enter opportunity name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="companyName">Company Name *</label>
+                        <input type="text" id="companyName" name="companyName" value="{{ opportunity.company }}" required placeholder="Enter company name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contactPerson">Contact Person *</label>
+                        <input type="text" id="contactPerson" name="contactPerson" value="{{ opportunity.contact }}" required placeholder="Enter contact person">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="opportunityValue">Provisional Bail (DT) *</label>
+                        <input type="number" id="opportunityValue" name="opportunityValue" value="{{ opportunity.value }}" required min="0" placeholder="Enter amount">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="closeDate">Deadline *</label>
+                        <input type="date" id="closeDate" name="closeDate" value="{{ opportunity.closeDate ? opportunity.closeDate|date('Y-m-d') : '' }}" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Enter opportunity description (optional)">{{ opportunity.description }}</textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save">
+                    💾 Update Opportunity
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('opportunityForm');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validation des champs requis
+                const requiredFields = ['opportunityName', 'companyName', 'contactPerson', 'opportunityValue', 'closeDate'];
+                let isValid = true;
+                
+                requiredFields.forEach(fieldName => {
+                    const field = document.getElementById(fieldName);
+                    if (!field.value.trim()) {
+                        field.style.borderColor = '#ff4757';
+                        isValid = false;
+                    } else {
+                        field.style.borderColor = '#e0e0e0';
+                    }
+                });
+                
+                if (isValid) {
+                    // Récupérer les données du formulaire
+                    const formData = new FormData(this);
+                    
+                    // Envoyer la requête AJAX
+                    fetch('{{ path('rh_edit_opportunity', {'id': opportunity.id}) }}', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('Server error: ' + response.status);
+                        }
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Afficher le message de succès
+                            successMessage.style.display = 'block';
+                            errorMessage.style.display = 'none';
+                            
+                            // Rediriger après 2 secondes
+                            setTimeout(() => {
+                                window.location.href = '{{ path('rh_home') }}';
+                            }, 2000);
+                        } else {
+                            throw new Error(data.error || 'Unknown error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        errorMessage.textContent = '❌ Error updating opportunity. Please try again.';
+                        errorMessage.style.display = 'block';
+                        successMessage.style.display = 'none';
+                    });
+                } else {
+                    errorMessage.textContent = '❌ Please fill in all required fields.';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                }
+            });
+            
+            // Réinitialiser les bordures lors de la saisie
+            document.querySelectorAll('input, select, textarea').forEach(field => {
+                field.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.style.borderColor = '#e0e0e0';
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %} 

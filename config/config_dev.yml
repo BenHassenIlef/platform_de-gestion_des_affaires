@@ -1,0 +1,5 @@
+# app/config/config_dev.yml
+swiftmailer:
+    transport: gmail
+    username:  ilefbenhassen20@gmail.com
+    password:  29/08/2003aoufa

@@ -1,0 +1,19 @@
+{
+    "controllers": {
+        "@symfony/ux-turbo": {
+            "turbo-core": {
+                "enabled": true,
+                "fetch": "eager"
+            },
+            "mercure-turbo-stream": {
+                "enabled": false,
+                "fetch": "eager"
+            }
+        },
+        "profile_image": {
+            "enabled": true,
+            "fetch": "eager"
+        }
+    },
+    "entrypoints": []
+}

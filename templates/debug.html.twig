@@ -1,0 +1,15 @@
+{# templates/debug.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Output</title>
+</head>
+<body>
+    <script>
+        // This will output the data to the browser console
+        console.log('this is the data in the project');
+        console.log({{ data|json_encode|raw }});
+    
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit Opportunity{% endblock %}
+{% block stylesheets %}
+<style>
+    body { background: linear-gradient(135deg, #e0ecff 0%, #fffbe0 100%); }
+    .edit-card {
+        background: #fffbe0;
+        border-radius: 24px;
+        box-shadow: 0 4px 24px rgba(0, 180, 255, 0.08);
+        padding: 40px 32px;
+        max-width: 520px;
+        margin: 40px auto;
+        border: 2px solid #e0ecff;
+    }
+    .edit-title {
+        color: #00b4ff;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+    .edit-form label {
+        color: #bfa100;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    .edit-form input[type="text"],
+    .edit-form input[type="number"],
+    .edit-form input[type="date"],
+    .edit-form select,
+    .edit-form textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1.5px solid #e0ecff;
+        margin-bottom: 18px;
+        font-size: 1rem;
+        background: #fff;
+        transition: border 0.2s;
+    }
+    .edit-form input:focus,
+    .edit-form select:focus,
+    .edit-form textarea:focus {
+        border: 1.5px solid #00b4ff;
+        outline: none;
+    }
+    .edit-form button, .edit-form .btn-secondary {
+        background: linear-gradient(90deg, #ffe066 0%, #00b4ff 100%);
+        color: #333;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(0,180,255,0.08);
+        margin-top: 10px;
+        margin-right: 10px;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .edit-form button:hover, .edit-form .btn-secondary:hover {
+        background: linear-gradient(90deg, #fffbe0 0%, #00b4ff 100%);
+        color: #222;
+        box-shadow: 0 4px 16px rgba(0,180,255,0.16);
+        transform: translateY(-2px) scale(1.03);
+    }
+</style>
+{% endblock %}
+{% block body %}
+<div class="edit-card">
+    <div class="edit-title">Edit Opportunity</div>
+    <form method="post" class="edit-form">
+        <div class="form-group">
+            <label for="opportunityName">Opportunity Name</label>
+            <input type="text" id="opportunityName" name="opportunityName" value="{{ opportunity.name }}" required>
+        </div>
+        <div class="form-group">
+            <label for="companyName">Company Name</label>
+            <input type="text" id="companyName" name="companyName" value="{{ opportunity.company }}" required>
+        </div>
+        <div class="form-group">
+            <label for="contactPerson">Contact Person</label>
+            <input type="text" id="contactPerson" name="contactPerson" value="{{ opportunity.contact }}" required>
+        </div>
+        <div class="form-group">
+            <label for="opportunityValue">Value (DT)</label>
+            <input type="number" id="opportunityValue" name="opportunityValue" min="0" value="{{ opportunity.value }}" required>
+        </div>
+        <div class="form-group">
+            <label for="closeDate">Expected Close Date</label>
+            <input type="date" id="closeDate" name="closeDate" value="{{ opportunity.closeDate ? opportunity.closeDate|date('Y-m-d') : '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="3">{{ opportunity.description }}</textarea>
+        </div>
+        <div class="form-actions" style="text-align:center;">
+            <a href="{{ path('rh_dashboard') }}" class="btn-secondary">Cancel</a>
+            <button type="submit">💾 Save</button>
+        </div>
+    </form>
+</div>
+{% endblock %} 

@@ -1,0 +1,296 @@
+{# No extends, no blocks, just the chat UI #}
+<style>
+    .chat-container {
+        max-width: 420px;
+        margin: 0 auto;
+        background: rgba(255,255,255,0.92);
+        border-radius: 22px;
+        box-shadow: 0 8px 32px rgba(0,159,227,0.18), 0 1.5px 8px 0 rgba(249, 178, 51, 0.10);
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 480px;
+        border: 1.5px solid #e0ecff;
+        backdrop-filter: blur(8px);
+        overflow: hidden;
+        position: relative;
+    }
+    .chat-header-bot {
+        background: linear-gradient(90deg, #009FE3 0%, #F9B233 100%);
+        color: #fff;
+        font-weight: 800;
+        font-size: 1.18rem;
+        padding: 18px 22px 14px 22px;
+        border-radius: 22px 22px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        box-shadow: 0 2px 8px rgba(0,159,227,0.10);
+        letter-spacing: 0.5px;
+    }
+    .chat-header-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #e0ecff;
+        border: 2.5px solid #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #BDBDBD;
+        box-shadow: 0 2px 8px rgba(0,159,227,0.10);
+    }
+    .chat-header-name {
+        font-size: 1.13rem;
+        font-weight: 700;
+        color: #fff;
+        letter-spacing: 0.5px;
+    }
+    .chat-messages {
+        flex: 1;
+        padding: 24px 18px 12px 18px;
+        overflow-y: auto;
+        background: linear-gradient(135deg, #e0ecff 0%, #fffbe0 100%);
+        min-height: 220px;
+        scrollbar-width: thin;
+        scrollbar-color: #009FE3 #e0ecff;
+    }
+    .chat-messages::-webkit-scrollbar {
+        width: 8px;
+        background: #e0ecff;
+    }
+    .chat-messages::-webkit-scrollbar-thumb {
+        background: #009FE3;
+        border-radius: 8px;
+    }
+    .chat-message {
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .chat-message.me {
+        align-items: flex-end;
+    }
+    .chat-bubble {
+        padding: 13px 20px;
+        border-radius: 18px 18px 6px 18px;
+        background: linear-gradient(90deg, #F9B233 0%, #009FE3 100%);
+        color: #fff;
+        font-size: 1.08rem;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0,159,227,0.08);
+        max-width: 70%;
+        word-break: break-word;
+        margin-bottom: 2px;
+        border-bottom-right-radius: 22px;
+        border-bottom-left-radius: 8px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+        position: relative;
+    }
+    .chat-message.me .chat-bubble {
+        background: linear-gradient(90deg, #009FE3 0%, #F9B233 100%);
+        color: #fff;
+        align-self: flex-end;
+        border-bottom-left-radius: 22px;
+        border-bottom-right-radius: 8px;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+    }
+    .chat-meta {
+        font-size: 0.85rem;
+        color: #009FE3;
+        margin-top: 2px;
+        opacity: 0.7;
+        font-weight: 600;
+    }
+    .chat-input-row {
+        display: flex;
+        padding: 18px 18px 18px 18px;
+        border-top: 1.5px solid #e0ecff;
+        background: rgba(255,255,255,0.98);
+        border-radius: 0 0 22px 22px;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+    }
+    .chat-input {
+        flex: 1;
+        border: 1.5px solid #e0ecff;
+        border-radius: 16px;
+        padding: 14px 18px;
+        font-size: 1.13rem;
+        margin-right: 0;
+        outline: none;
+        transition: border 0.2s, box-shadow 0.2s;
+        background: #f8fbff;
+        font-weight: 500;
+        color: #222;
+        box-shadow: 0 1px 6px rgba(0,180,255,0.03);
+    }
+    .chat-input:focus {
+        border: 1.5px solid #009FE3;
+        background: #fffbe0;
+        box-shadow: 0 2px 8px rgba(0,180,255,0.08);
+    }
+    .chat-send-btn {
+        background: linear-gradient(90deg, #009FE3 0%, #F9B233 100%);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        font-size: 1.35rem;
+        font-weight: 900;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        box-shadow: 0 1px 6px rgba(0,159,227,0.08);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+    }
+    .chat-send-btn:hover {
+        background: linear-gradient(90deg, #F9B233 0%, #009FE3 100%);
+        transform: scale(1.08);
+    }
+    .chat-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px 18px 18px 18px;
+        background: rgba(255,255,255,0.98);
+        border-radius: 0 0 22px 22px;
+        border-top: 1px solid #e0ecff;
+        justify-content: flex-start;
+    }
+    .chat-suggestion-btn {
+        background: linear-gradient(90deg, #009FE3 0%, #F9B233 100%);
+        color: #fff;
+        border: none;
+        border-radius: 16px;
+        padding: 7px 18px;
+        font-size: 1.01rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 1px 6px rgba(0,159,227,0.08);
+    }
+    .chat-suggestion-btn:hover {
+        background: linear-gradient(90deg, #F9B233 0%, #009FE3 100%);
+        color: #222;
+    }
+</style>
+{% if otherUser %}
+<div class="chat-container">
+    {% if 'ROLE_ADMIN' in otherUser.roles %}
+    <div class="chat-header-bot">
+        {% if otherUser.profilePicture %}
+            <img src="{{ asset('uploads/profile/' ~ otherUser.profilePicture) }}" alt="Admin" class="chat-header-avatar">
+        {% else %}
+            <span class="chat-header-avatar"><i class="fas fa-user"></i></span>
+        {% endif %}
+        <span class="chat-header-name">{{ otherUser.name ?: otherUser.email }}</span>
+    </div>
+    {% endif %}
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-row">
+        <input type="text" id="chatInput" class="chat-input" placeholder="Type your message..." autocomplete="off">
+        <button class="chat-send-btn" id="chatSendBtn">Send</button>
+    </div>
+    <div class="chat-suggestions">
+        <button type="button" class="chat-suggestion-btn">Hello</button>
+        <button type="button" class="chat-suggestion-btn">Good morning</button>
+        <button type="button" class="chat-suggestion-btn">How are you?</button>
+        <button type="button" class="chat-suggestion-btn">Thank you!</button>
+        <button type="button" class="chat-suggestion-btn">Can we schedule a meeting?</button>
+    </div>
+</div>
+<input type="hidden" id="otherUserId" value="{{ otherUser.id }}">
+<script>
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+const chatSendBtn = document.getElementById('chatSendBtn');
+const otherUserId = document.getElementById('otherUserId').value;
+let lastScrollHeight = 0;
+
+function fetchMessages() {
+    fetch(`/chat/messages?other=${otherUserId}`)
+        .then(res => res.json())
+        .then(data => {
+            chatMessages.innerHTML = '';
+            const myEmail = '{{ app.user is defined and app.user ? app.user.email|e('js') : '' }}';
+            data.forEach(msg => {
+                const div = document.createElement('div');
+                div.className = 'chat-message' + (msg.sender === myEmail ? ' me' : '');
+                div.innerHTML = `<div class=\"chat-bubble\">${msg.content.replace(/</g, '&lt;')}</div><div class=\"chat-meta\">${msg.sender === myEmail ? 'You' : msg.sender} • ${msg.createdAt}</div>`;
+                chatMessages.appendChild(div);
+            });
+            if (chatMessages.scrollHeight !== lastScrollHeight) {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                lastScrollHeight = chatMessages.scrollHeight;
+            }
+        });
+}
+
+function sendMessage() {
+    const content = chatInput.value.trim();
+    if (!content) return;
+    chatSendBtn.disabled = true;
+    // Optimistically add the message to the chat window
+    const myEmail = '{{ app.user is defined and app.user ? app.user.email|e('js') : '' }}';
+    const now = new Date();
+    const nowStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+    const div = document.createElement('div');
+    div.className = 'chat-message me';
+    div.innerHTML = `<div class=\"chat-bubble\">${content.replace(/</g, '&lt;')}</div><div class=\"chat-meta\">You • ${nowStr}</div>`;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    chatInput.value = '';
+    fetch('/chat/send', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: `receiver=${encodeURIComponent(otherUserId)}&content=${encodeURIComponent(content)}`
+    })
+    .then(res => res.json())
+    .then(() => {
+        fetchMessages();
+        chatSendBtn.disabled = false;
+        chatInput.focus();
+    })
+    .catch(() => {
+        chatSendBtn.disabled = false;
+        chatInput.focus();
+    });
+}
+
+chatSendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendMessage();
+});
+document.querySelectorAll('.chat-suggestion-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        chatInput.value = this.textContent;
+        chatInput.focus();
+    });
+});
+setInterval(fetchMessages, 2000);
+fetchMessages();
+// After chatUserSelect changes, notify parent window
+const chatUserSelect = document.getElementById('chatUserSelect');
+if (chatUserSelect) {
+    chatUserSelect.addEventListener('change', function() {
+        if (window.parent !== window) {
+            window.parent.postMessage({ type: 'setChatPartner', userId: this.value }, '*');
+        }
+    });
+}
+</script>
+{% else %}
+<div class="chat-container" style="padding: 32px; text-align: center; color: #009FE3; font-weight: 700;">
+    No admin user found. Please contact your administrator to set up an admin account for chat.
+</div>
+{% endif %} 

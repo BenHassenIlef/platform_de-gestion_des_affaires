@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        body {
+            background: linear-gradient(120deg, #a8ff78 0%, #78ffd6 50%, #43e97b 100%, #38f9d7 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            color: #222;
+        }
+        .admin-home-container {
+            max-width: 600px;
+            margin: 60px auto 0 auto;
+            padding: 48px 32px 48px 32px;
+            background: #fff;
+            border-radius: 32px;
+            box-shadow: 0 8px 32px rgba(102,126,234,0.10), 0 1.5px 8px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .admin-home-container h2 {
+            text-align: center;
+            margin-bottom: 32px;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #2d2d2d;
+            letter-spacing: 0.5px;
+        }
+        .edit-user-form label {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #5ec6e7;
+            font-size: 1.08rem;
+        }
+        .edit-user-form input, .edit-user-form select {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 18px;
+            border: none;
+            font-size: 1.12rem;
+            background: #e7f0fd;
+            color: #222;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.07);
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        .edit-user-form input:focus, .edit-user-form select:focus {
+            outline: none;
+            border: 2px solid #5ec6e7;
+            background: #fff;
+            box-shadow: 0 0 0 2px #e0eafc;
+        }
+        .action-btn {
+            display: inline-block;
+            padding: 10px 26px;
+            border-radius: 22px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(90deg, #5ec6e7 0%, #f7b42c 100%);
+            border: none;
+            outline: none;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(94,198,231,0.10);
+            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+            margin: 0 8px 0 0;
+        }
+        .action-btn:hover {
+            background: linear-gradient(90deg, #f7b42c 0%, #5ec6e7 100%);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 4px 16px rgba(94,198,231,0.16);
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    {% include 'navbar.html.twig' %}
+    <div class="admin-home-container">
+        <h2>Edit User</h2>
+        <form method="post" class="edit-user-form">
+            <label>Email:</label>
+            <input type="email" name="email" value="{{ user.email }}" required>
+            <label>Role:</label>
+            <select name="role">
+                <option value="ROLE_USER" {% if 'ROLE_USER' in user.roles %}selected{% endif %}>User</option>
+                <option value="ROLE_RH" {% if 'ROLE_RH' in user.roles %}selected{% endif %}>RH</option>
+                <option value="ROLE_ADMIN" {% if 'ROLE_ADMIN' in user.roles %}selected{% endif %}>Admin</option>
+            </select>
+            <label>New Password (leave blank to keep current):</label>
+            <input type="password" name="password">
+            <button type="submit" class="action-btn">Save</button>
+            <a href="{{ path('admin_new_users') }}" class="action-btn">Cancel</a>
+        </form>
+    </div>
+{% endblock %} 

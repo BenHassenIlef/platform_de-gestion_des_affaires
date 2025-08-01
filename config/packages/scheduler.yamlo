@@ -1,0 +1,6 @@
+scheduler:
+  tasks:
+    project_deadline:
+      type: cron
+      expression: "0 9 * * *" # Daily at 9 AM
+      service: 'App\Task'

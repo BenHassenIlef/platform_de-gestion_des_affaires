@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>Project Deadline Approaching</h1>
+        <p>Dear {{ user.name }},</p>
+        <p>The deadline for your project "{{ project.name }}" is approaching on {{ project.deadline|date('Y-m-d') }}.</p>
+        <p>Please make sure to complete your tasks before the deadline.</p>
+    </body>
+</html>

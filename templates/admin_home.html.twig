@@ -1,0 +1,290 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin Home{% endblock %}
+{% block stylesheets %}
+<style>
+    body {
+        background: linear-gradient(120deg, #a8ff78 0%, #78ffd6 50%, #43e97b 100%, #38f9d7 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        color: #222;
+    }
+
+    .admin-home-container {
+        max-width: 1100px;
+        margin: 60px auto 0 auto;
+        padding: 48px 32px 48px 32px;
+        background: #fff;
+        border-radius: 32px;
+        box-shadow: 0 8px 32px rgba(102,126,234,0.10), 0 1.5px 8px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+    }
+    .admin-home-container h1 {
+        text-align: center;
+        margin-bottom: 32px;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #2d2d2d;
+        letter-spacing: 0.5px;
+    }
+    .add-user-btn {
+        background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+        color: white;
+        border: none;
+        padding: 16px 40px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        font-family: inherit;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease, box-shadow 0.2s;
+        box-shadow: 0 2px 12px rgba(102,126,234,0.12);
+        margin-top: 32px;
+    }
+    .add-user-btn:hover {
+        background: linear-gradient(135deg,#764ba2 0%,#667eea 100%);
+        box-shadow: 0 4px 24px rgba(102,126,234,0.18);
+        transform: translateY(-2px) scale(1.03);
+    }
+    .opportunity-table {
+        width: 100%;
+        margin-bottom: 40px;
+        border-radius: 24px;
+        overflow: auto;
+        background: #fff;
+        box-shadow: none;
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: auto;
+        word-break: break-word;
+    }
+    .opportunity-table th, .opportunity-table td {
+        padding: 10px 10px;
+        font-size: 1rem;
+        white-space: normal;
+        word-break: break-word;
+        max-width: 180px;
+    }
+    @media (max-width: 800px) {
+        .opportunity-table {
+            display: block;
+            overflow-x: auto;
+            min-width: 600px;
+        }
+    }
+    .opportunity-table th {
+        background: #dbeafe;
+        color: #222;
+        font-weight: 700;
+        font-size: 1.12rem;
+        padding: 18px 22px;
+        border: none;
+    }
+    .opportunity-table th:first-child {
+        border-top-left-radius: 24px;
+    }
+    .opportunity-table th:last-child {
+        border-top-right-radius: 24px;
+    }
+    .opportunity-table td {
+        background: #fff;
+        padding: 18px 22px;
+        border: none;
+        font-size: 1.05rem;
+    }
+    .opportunity-table tr {
+        box-shadow: none;
+    }
+    .opportunity-table tr:nth-child(even) td {
+        background: #f6faff;
+    }
+    .opportunity-table tr:hover td {
+        background: #e3eafe;
+        transition: background 0.2s;
+    }
+    .admin-home-container h2 {
+        text-align: center;
+        margin-bottom: 32px;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #2d2d2d;
+        letter-spacing: 0.5px;
+    }
+    .user-label {
+        color: #333;
+        margin-right: 6px;
+        font-size: 1.08rem;
+        font-weight: 500;
+    }
+    .change-password-btn-container {
+        display: flex;
+        justify-content: center;
+        margin: 32px 0 0 0;
+    }
+    .change-password-btn {
+        display: inline-block;
+        padding: 18px 60px;
+        border-radius: 40px;
+        background: linear-gradient(90deg, #ffe259 0%, #38b6ff 100%);
+        color: #222;
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        box-shadow: 0 4px 24px rgba(56,182,255,0.10);
+        transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+        margin-bottom: 32px;
+    }
+    .change-password-btn:hover {
+        background: linear-gradient(90deg, #38b6ff 0%, #ffe259 100%);
+        color: #111;
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 8px 32px rgba(56,182,255,0.18);
+    }
+    .decision-select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: #f8fbff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .decision-select:focus {
+        outline: none;
+        border-color: #38b6ff;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(56,182,255,0.1);
+    }
+    .decision-select option[value="approved"] {
+        color: #28a745;
+        font-weight: 600;
+    }
+    .decision-select option[value="rejected"] {
+        color: #dc3545;
+        font-weight: 600;
+    }
+    .decision-select option[value="pending"] {
+        color: #ffc107;
+        font-weight: 600;
+    }
+    .decision-select option[value="under_review"] {
+        color: #17a2b8;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+{% block body %}
+    {% include 'navbar.html.twig' %}
+    <div class="admin-home-container">
+        <h2 style="margin-top:40px;">Opportunities Notified by RH</h2>
+        <table class="opportunity-table">
+            <thead>
+                <tr>
+                    <th>Opportunity Name</th>
+                    <th>Company</th>
+                    <th>Contact Person</th>
+                    <th>Provisional bail (DT)</th>
+                    <th>Deadline</th>
+                    <th>Description</th>
+                    <th>Decision</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for opp in opportunities %}
+                    <tr>
+                        <td>{{ opp.name }}</td>
+                        <td>{{ opp.company }}</td>
+                        <td>{{ opp.contact }}</td>
+                        <td>{{ opp.value }} DT</td>
+                        <td>{{ opp.closeDate ? opp.closeDate|date('Y-m-d') : '' }}</td>
+                        <td>{{ opp.description }}</td>
+                        <td>
+                            <select class="decision-select" data-opportunity-id="{{ opp.id }}">
+                                <option value="">Select...</option>
+                                <option value="approved">✅ Approved</option>
+                                <option value="rejected">❌ Rejected</option>
+                                <option value="pending">⏳ Pending</option>
+                                <option value="under_review">🔍 Under Review</option>
+                            </select>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7">No opportunities found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Gestion des changements de décision
+        document.addEventListener('DOMContentLoaded', function() {
+            const decisionSelects = document.querySelectorAll('.decision-select');
+            
+            decisionSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    const opportunityId = this.getAttribute('data-opportunity-id');
+                    const decision = this.value;
+                    
+                    if (decision) {
+                        // Ici vous pouvez ajouter une requête AJAX pour sauvegarder la décision
+                        console.log(`Opportunity ${opportunityId}: Decision changed to ${decision}`);
+                        
+                        // Optionnel : Afficher une notification
+                        showNotification(`Decision updated to: ${this.options[this.selectedIndex].text}`, 'success');
+                    }
+                });
+            });
+        });
+        
+        // Fonction pour afficher des notifications
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            if (type === 'success') {
+                notification.style.background = 'linear-gradient(90deg, #28a745, #20c997)';
+            } else if (type === 'error') {
+                notification.style.background = 'linear-gradient(90deg, #dc3545, #e74c3c)';
+            } else {
+                notification.style.background = 'linear-gradient(90deg, #17a2b8, #38b6ff)';
+            }
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // CSS pour les animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+{% endblock %} 

@@ -1,0 +1,195 @@
+<style>
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0eafc url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover no-repeat;
+    border: 2px solid #5ec6e7;
+    margin-right: 12px;
+    display: inline-block;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+.user-name-or-email {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #222;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 40px;
+    /* Pour aligner verticalement avec l'avatar */
+    transition: color 0.2s, transform 0.2s;
+}
+
+.navbar-left a:hover .user-name-or-email {
+    color: #5ec6e7;
+    transform: translateY(-2px);
+}
+
+.navbar-left a:hover .avatar {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(94,198,231,0.25);
+}
+.navbar-admin {
+    z-index: 9999 !important;
+    position: relative;
+    width: 90vw;
+    max-width: 1000px;
+    margin: 32px auto 40px auto;
+    background: #fff;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 32px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+}
+.navbar-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+}
+.pill-btn {
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #5ec6e7 0%, #f7b42c 100%);
+    border: none;
+    outline: none;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(94,198,231,0.10);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+}
+.pill-btn:hover {
+    background: linear-gradient(90deg, #f7b42c 0%, #5ec6e7 100%);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px rgba(94,198,231,0.16);
+}
+.logout-btn {
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #ff5858 0%, #f7b42c 100%);
+    border: none;
+    outline: none;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(247,180,44,0.10), 0 1px 0 0 #fff6 inset;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+}
+.logout-btn::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; right: 0; height: 50%;
+    background: linear-gradient(90deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0.08) 100%);
+    pointer-events: none;
+}
+.logout-btn:hover {
+    background: linear-gradient(90deg, #f7b42c 0%, #ff5858 100%);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px rgba(247,180,44,0.16);
+}
+.logout-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+.navbar-admin, .navbar-admin * {
+    pointer-events: auto !important;
+}
+#new-users-btn {
+    z-index: 10 !important;
+}
+</style>
+<nav class="navbar-admin">
+    <div class="navbar-left">
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('admin_home') }}" style="display:flex;align-items:center;text-decoration:none;cursor:pointer;" title="Cliquez pour accéder à la page d'accueil Admin">
+                <span class="avatar"></span>
+                <span class="user-name-or-email" id="navbar-name">
+                    {{ app.user.name }}
+                </span>
+            </a>
+        {% elseif is_granted('ROLE_RH') %}
+            <a href="{{ path('rh_home') }}" style="display:flex;align-items:center;text-decoration:none;cursor:pointer;" title="Cliquez pour accéder à la page d'accueil RH">
+                <span class="avatar"></span>
+                <span class="user-name-or-email" id="navbar-name">
+                    {{ app.user.name }}
+                </span>
+            </a>
+        {% else %}
+            <a href="{{ path('rh_home') }}" style="display:flex;align-items:center;text-decoration:none;cursor:pointer;" title="Cliquez pour accéder à la page d'accueil">
+                <span class="avatar"></span>
+                <span class="user-name-or-email" id="navbar-name">
+                    {{ app.user.name }}
+                </span>
+            </a>
+        {% endif %}
+    </div>
+    <div class="navbar-actions">
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('admin_profile') }}" class="pill-btn profile-btn">Profile</a>
+            <a href="{{ path('admin_dashboard') }}#add-user-form" class="pill-btn">Add User</a>
+            <a href="{{ path('admin_change_password') }}" class="pill-btn password-btn">Change Password</a>
+        {% elseif is_granted('ROLE_RH') %}
+            <a href="{{ path('rh_profile') }}" class="pill-btn profile-btn">Profile</a>
+            <a href="{{ path('admin_change_password') }}" class="pill-btn password-btn">Change Password</a>
+        {% else %}
+            <a href="{{ path('admin_profile') }}" class="pill-btn profile-btn">Profile</a>
+            <a href="{{ path('admin_change_password') }}" class="pill-btn password-btn">Change Password</a>
+        {% endif %}
+        <a href="{{ path('app_logout') }}" class="logout-btn">
+            <svg class="logout-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"/></svg>
+            Logout
+        </a>
+    </div>
+    <script>
+        function updateNavbarAvatar() {
+            console.log('updateNavbarAvatar appelée');
+            var avatarUrl = localStorage.getItem('customProfileAvatar');
+            document.querySelectorAll('.avatar').forEach(function(avatar) {
+                if (avatarUrl && avatarUrl.startsWith('data:image')) {
+                    avatar.style.backgroundImage = `url('${avatarUrl}')`;
+                } else {
+                    avatar.style.backgroundImage = "url('https://cdn-icons-png.flaticon.com/512/149/149071.png')";
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var name = localStorage.getItem('customProfileName');
+            var email = "{{ app.user.email|e('js') }}";
+            var userName = "{{ app.user.name|e('js') }}";
+            document.querySelectorAll('.user-name-or-email').forEach(function(el) {
+                el.textContent = (name && name.trim()) ? name : (userName && userName.trim() ? userName : email);
+            });
+            updateNavbarAvatar();
+        });
+        // Permet la mise à jour dynamique depuis d'autres scripts
+        window.updateNavbarAvatar = updateNavbarAvatar;
+    </script>
+</nav>

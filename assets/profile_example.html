@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemple de Profil</title>
+    <!-- Importation des styles -->
+    <link rel="stylesheet" href="/styles/app.css">
+</head>
+<body>
+    <!-- 
+        Exemple d'utilisation du contrôleur profile_image
+        
+        Pour utiliser ce contrôleur dans vos templates Twig Symfony :
+        1. Ajoutez l'attribut data-controller="profile-image" à l'élément parent
+        2. Ajoutez data-profile-image-target="input" à l'input de type file
+        3. Ajoutez data-profile-image-target="preview" à l'image de prévisualisation
+        4. Ajoutez data-profile-image-target="icon" à l'icône qui doit être mise à jour
+        5. Ajoutez data-action="change->profile-image#changeImage" à l'input file
+    -->
+    
+    <div class="container" data-controller="profile-image">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Icône de profil dans la barre de navigation -->
+                <div class="navbar-avatar">
+                    <img src="/images/ph2.png" alt="Avatar" class="avatar-icon" data-profile-image-target="icon">
+                </div>
+            </div>
+            
+            <div class="col-md-8">
+                <!-- Formulaire de profil -->
+                <form class="profile-form" data-profile-image-target="form" data-action="submit->profile-image#saveImage">
+                    <div class="form-group">
+                        <label for="profileImage">Image de profil</label>
+                        <div class="image-preview-container">
+                            <img src="/images/ph2.png" alt="Prévisualisation" class="image-preview" data-profile-image-target="preview">
+                        </div>
+                        <input type="file" 
+                               id="profileImage" 
+                               class="form-control" 
+                               accept="image/*" 
+                               data-profile-image-target="input"
+                               data-action="change->profile-image#changeImage">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="name">Nom</label>
+                        <input type="text" id="name" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" data-action="click->profile-image#saveImage">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Importation des scripts -->
+    <script src="/app.js"></script>
+</body>
+</html>

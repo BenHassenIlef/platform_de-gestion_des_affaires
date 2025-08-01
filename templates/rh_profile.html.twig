@@ -1,0 +1,558 @@
+{% extends 'base.html.twig' %}
+{% block title %}RH Profile{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .main-container {
+        max-width: 800px;
+        margin: 60px auto 0 auto;
+        padding: 20px;
+    }
+
+    .profile-header {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 180, 255, 0.10);
+        padding: 50px 40px;
+        margin-bottom: 30px;
+        border: 3px solid;
+        border-image: linear-gradient(90deg, #00b4ff 0%, #ffe066 100%) 1;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #00b4ff 0%, #ffe066 100%);
+    }
+
+    .profile-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 40px;
+        letter-spacing: 1.5px;
+        text-shadow: 0 2px 4px rgba(0, 180, 255, 0.1);
+    }
+
+    .avatar-section {
+        margin-bottom: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 30px auto;
+        color: white;
+        font-size: 3.5rem;
+        font-weight: 700;
+        border: 6px solid #fff;
+        box-shadow: 0 12px 35px rgba(0, 180, 255, 0.25);
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    .profile-avatar::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transform: rotate(45deg);
+        transition: all 0.6s ease;
+    }
+
+    .profile-avatar:hover {
+        transform: scale(1.08) rotate(2deg);
+        box-shadow: 0 16px 45px rgba(0, 180, 255, 0.35);
+    }
+
+    .profile-avatar:hover::before {
+        transform: rotate(225deg);
+    }
+
+    .avatar-controls {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .btn-avatar {
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        color: #222;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0, 180, 255, 0.2);
+        min-width: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-avatar:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(0, 180, 255, 0.4);
+        color: #0077b6;
+    }
+
+    .btn-avatar:active {
+        transform: translateY(-1px);
+    }
+
+    .profile-info-section {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 180, 255, 0.10);
+        padding: 40px;
+        margin-bottom: 30px;
+        border: 3px solid;
+        border-image: linear-gradient(90deg, #00b4ff 0%, #ffe066 100%) 1;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #00b4ff;
+        margin-bottom: 25px;
+        text-align: center;
+        letter-spacing: 0.5px;
+    }
+
+    .user-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .info-card {
+        background: #f8f9ff;
+        border-radius: 15px;
+        padding: 20px;
+        border-left: 4px solid #00b4ff;
+        transition: all 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 180, 255, 0.15);
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #555;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .role-badge {
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        color: #222;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: inline-block;
+    }
+
+    .edit-form-section {
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 180, 255, 0.10);
+        padding: 40px;
+        border: 3px solid;
+        border-image: linear-gradient(90deg, #00b4ff 0%, #ffe066 100%) 1;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 700;
+        color: #00b4ff;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fbff;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #00b4ff;
+        background: #fffbe0;
+        box-shadow: 0 0 0 3px rgba(0, 180, 255, 0.1);
+    }
+
+    .form-group input:disabled {
+        background: #f1f3f4;
+        color: #666;
+        cursor: not-allowed;
+        border-color: #ddd;
+    }
+
+    .btn-save {
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        color: #222;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(0, 180, 255, 0.2);
+    }
+
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 180, 255, 0.3);
+        color: #0077b6;
+    }
+
+    .success-message {
+        background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .main-container {
+            margin: 40px 15px 0 15px;
+            padding: 10px;
+        }
+        
+        .profile-header,
+        .profile-info-section,
+        .edit-form-section {
+            padding: 30px 20px;
+        }
+        
+        .profile-title {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            font-size: 3rem;
+            margin-bottom: 25px;
+        }
+        
+        .avatar-controls {
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            max-width: 280px;
+        }
+        
+        .btn-avatar {
+            width: 100%;
+            min-width: auto;
+            padding: 12px 20px;
+        }
+        
+        .user-info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .profile-header {
+            padding: 25px 15px;
+        }
+        
+        .profile-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .avatar-controls {
+            gap: 12px;
+        }
+        
+        .btn-avatar {
+            padding: 10px 16px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'navbar.html.twig' %}
+    
+    <div class="main-container">
+        <!-- Header Section -->
+        <div class="profile-header">
+            <h1 class="profile-title">👤 My RH Profile</h1>
+            
+            <div class="avatar-section">
+                <div class="profile-avatar" id="profile-avatar">
+                    {{ app.user.name ? app.user.name|first|upper : 'R' }}
+                </div>
+                <div class="avatar-controls">
+                    <button type="button" class="btn-avatar" onclick="document.getElementById('avatar-input').click();">
+                        📷 Change Image
+                    </button>
+                    <button type="button" class="btn-avatar" onclick="removeAvatar();">
+                        🗑️ Remove Image
+                    </button>
+                </div>
+                <input type="file" id="avatar-input" name="avatar" accept="image/*" style="display: none;">
+            </div>
+        </div>
+
+        <!-- User Information Section -->
+        <div class="profile-info-section">
+            <h2 class="section-title">📋 Account Information</h2>
+            
+            <div class="user-info-grid">
+                <div class="info-card">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-value" id="display-name">{{ app.user.name ?? 'Not defined' }}</div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-label">Email Address</div>
+                    <div class="info-value">{{ app.user.email }}</div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-label">Role</div>
+                    <div class="role-badge">RH</div>
+                </div>
+                
+                <div class="info-card">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">🟢 Active</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form Section -->
+        <div class="edit-form-section">
+            <h2 class="section-title">✏️ Edit Profile</h2>
+            
+            <div class="success-message" id="successMessage">
+                ✅ Profile updated successfully!
+            </div>
+            
+            <form method="post" enctype="multipart/form-data" id="profileForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="profile_name">Full Name</label>
+                        <input type="text" id="profile_name" name="profile_name" value="{{ app.user.name ?? '' }}" placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="profile_email">Email Address</label>
+                        <input type="email" id="profile_email" value="{{ app.user.email }}" disabled>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-save">
+                    💾 Save Changes
+                </button>
+            </form>
+            
+            <script>
+                // Debug: Afficher les données du formulaire avant soumission
+                document.getElementById('profileForm').addEventListener('submit', function(e) {
+                    const nameInput = document.getElementById('profile_name');
+                    console.log('Form submitted with name: ' + nameInput.value);
+                    console.log('Form data:', new FormData(this));
+                });
+            </script>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mise à jour en temps réel du nom affiché
+            const nameInput = document.getElementById('profile_name');
+            const displayName = document.getElementById('display-name');
+            
+            nameInput.addEventListener('input', function() {
+                const newName = this.value.trim();
+                if (newName) {
+                    displayName.textContent = newName;
+                } else {
+                    displayName.textContent = 'Not defined';
+                }
+            });
+
+            // Gestion de l'avatar
+            const avatarInput = document.getElementById('avatar-input');
+            const profileAvatar = document.getElementById('profile-avatar');
+
+            // Charger l'avatar personnalisé depuis localStorage
+            var avatarUrl = localStorage.getItem('customProfileAvatar');
+            if (avatarUrl && avatarUrl.startsWith('data:image')) {
+                profileAvatar.style.backgroundImage = `url('${avatarUrl}')`;
+                profileAvatar.style.backgroundSize = 'cover';
+                profileAvatar.style.backgroundPosition = 'center';
+                profileAvatar.style.backgroundRepeat = 'no-repeat';
+                profileAvatar.textContent = '';
+            }
+
+            // Charger le nom personnalisé
+            var customName = localStorage.getItem('customProfileName');
+            if (customName && customName.trim()) {
+                nameInput.value = customName;
+                displayName.textContent = customName.trim();
+            }
+
+            // Gérer le changement d'avatar
+            avatarInput.addEventListener('change', function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var avatarUrl = e.target.result;
+                        var avatar = document.getElementById('profile-avatar');
+                        avatar.style.backgroundImage = `url('${avatarUrl}')`;
+                        avatar.style.backgroundSize = 'cover';
+                        avatar.style.backgroundPosition = 'center';
+                        avatar.style.backgroundRepeat = 'no-repeat';
+                        avatar.textContent = '';
+                        localStorage.setItem('customProfileAvatar', avatarUrl);
+                        
+                        // Mettre à jour la navbar
+                        if (window.updateNavbarAvatar) {
+                            window.updateNavbarAvatar();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Gérer la soumission du formulaire
+            document.getElementById('profileForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                var name = document.getElementById('profile_name').value;
+                if (name && name.trim()) {
+                    localStorage.setItem('customProfileName', name.trim());
+                    
+                    // Mettre à jour la navbar
+                    document.querySelectorAll('.user-name-or-email').forEach(function(el) {
+                        el.textContent = name.trim();
+                    });
+
+                    // Afficher le message de succès
+                    var successMessage = document.getElementById('successMessage');
+                    successMessage.style.display = 'block';
+                    
+                    // Masquer le message après 3 secondes
+                    setTimeout(function() {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                }
+            });
+        });
+
+        function removeAvatar() {
+            var avatar = document.getElementById('profile-avatar');
+            avatar.style.backgroundImage = 'none';
+            avatar.style.backgroundSize = 'cover';
+            avatar.style.backgroundPosition = 'center';
+            avatar.style.backgroundRepeat = 'no-repeat';
+            avatar.textContent = '{{ app.user.name ? app.user.name|first|upper : "R" }}';
+            localStorage.removeItem('customProfileAvatar');
+            
+            // Mettre à jour la navbar
+            if (window.updateNavbarAvatar) {
+                window.updateNavbarAvatar();
+            }
+        }
+    </script>
+{% endblock %} 

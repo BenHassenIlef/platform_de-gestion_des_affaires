@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  symfony_php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www/symfony
+    networks:
+      - symfony_network
+
+  symfony_nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/symfony
+    depends_on:
+      - symfony_php
+    networks:
+      - symfony_network
+
+networks:
+  symfony_network:
+    driver: bridge

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+{% block title %}Home{% endblock %}
+{% block stylesheets %}
+<style>
+    body {
+        background: linear-gradient(120deg, #a8ff78 0%, #78ffd6 50%, #43e97b 100%, #38f9d7 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        color: #222;
+    }
+    .home-container {
+        max-width: 800px;
+        margin: 60px auto 0 auto;
+        padding: 48px 32px 48px 32px;
+        background: #fff;
+        border-radius: 40px;
+        box-shadow: 0 8px 40px rgba(102,126,234,0.13), 0 1.5px 8px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .home-title {
+        font-size: 2.4rem;
+        font-weight: 900;
+        background: linear-gradient(90deg, #5ec6e7 0%, #f7b42c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 20px;
+    }
+    .welcome-text {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+{% block body %}
+    {% include 'navbar.html.twig' %}
+    
+    <div class="home-container">
+        <h1 class="home-title">Bienvenue !</h1>
+        <p class="welcome-text">Vous êtes connecté avec succès.</p>
+        <p>Nom affiché dans la navbar : <strong>{{ app.user.name ?: app.user.email }}</strong></p>
+        <p style="margin-top: 20px; color: #5ec6e7; font-weight: 600;">Astuce : Cliquez sur votre avatar ou votre nom dans la barre de navigation pour accéder à votre profil !</p>
+    </div>
+{% endblock %}

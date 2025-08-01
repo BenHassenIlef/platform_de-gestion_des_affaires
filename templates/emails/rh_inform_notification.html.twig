@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH Notification</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .user-info { background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .opportunities { background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #00b4ff; }
+        .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 RH Notification - New Opportunities</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Hello Administrator,</h2>
+            
+            <p>A RH user has notified you about new opportunities that require your attention.</p>
+            
+            <div class="user-info">
+                <h3>👤 RH User Information:</h3>
+                <p><strong>Name:</strong> {{ rh_user.name ?? 'Not specified' }}</p>
+                <p><strong>Email:</strong> {{ rh_user.email }}</p>
+                <p><strong>Role:</strong> RH</p>
+                <p><strong>Notification Date:</strong> {{ "now"|date("Y-m-d H:i:s") }}</p>
+            </div>
+            
+            <div class="opportunities">
+                <h3>📋 Opportunities Summary:</h3>
+                <p><strong>Total Opportunities:</strong> {{ opportunities|length }}</p>
+                <p><strong>Newly Notified:</strong> {{ opportunities_count }}</p>
+                
+                {% if opportunities|length > 0 %}
+                    <h4>Recent Opportunities:</h4>
+                    <ul>
+                    {% for opportunity in opportunities|slice(0, 5) %}
+                        <li><strong>{{ opportunity.name }}</strong> - {{ opportunity.company }} ({{ opportunity.value }} DT)</li>
+                    {% endfor %}
+                    {% if opportunities|length > 5 %}
+                        <li><em>... and {{ opportunities|length - 5 }} more opportunities</em></li>
+                    {% endif %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <p><strong>Action Required:</strong> Please log into the system to review and make decisions on these opportunities.</p>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated notification from the HR Management System.</p>
+            <p>Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html> 
