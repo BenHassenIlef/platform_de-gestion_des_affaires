@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jul 23, 2024 at 09:38 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Hôte : 127.0.0.1
+-- Généré le : dim. 03 août 2025 à 23:30
+-- Version du serveur : 10.4.32-MariaDB
+-- Version de PHP : 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,38 +18,27 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `app`
+-- Base de données : `app`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `doctrine_migration_versions`
+-- Structure de la table `message`
 --
 
-CREATE TABLE `doctrine_migration_versions` (
-  `version` varchar(191) NOT NULL,
-  `executed_at` datetime DEFAULT NULL,
-  `execution_time` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `doctrine_migration_versions`
---
-
-INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_time`) VALUES
-('DoctrineMigrations\\Version20240614142623', '2024-06-14 14:26:51', 321),
-('DoctrineMigrations\\Version20240614143344', '2024-06-14 14:36:53', 126),
-('DoctrineMigrations\\Version20240618105121', '2024-06-18 10:51:38', 267),
-('DoctrineMigrations\\Version20240708095809', '2024-07-08 09:58:25', 68),
-('DoctrineMigrations\\Version20240708100410', '2024-07-08 10:04:16', 9),
-('DoctrineMigrations\\Version20240712081603', '2024-07-12 08:16:18', 99),
-('DoctrineMigrations\\Version20240712113114', '2024-07-12 11:33:43', 68);
+CREATE TABLE `message` (
+  `id` int(11) NOT NULL,
+  `sender_id` int(11) DEFAULT NULL,
+  `receiver_id` int(11) DEFAULT NULL,
+  `content` longtext NOT NULL,
+  `created_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `messenger_messages`
+-- Structure de la table `messenger_messages`
 --
 
 CREATE TABLE `messenger_messages` (
@@ -63,7 +52,7 @@ CREATE TABLE `messenger_messages` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `messenger_messages`
+-- Déchargement des données de la table `messenger_messages`
 --
 
 INSERT INTO `messenger_messages` (`id`, `body`, `headers`, `queue_name`, `created_at`, `available_at`, `delivered_at`) VALUES
@@ -74,7 +63,34 @@ INSERT INTO `messenger_messages` (`id`, `body`, `headers`, `queue_name`, `create
 -- --------------------------------------------------------
 
 --
--- Table structure for table `projet`
+-- Structure de la table `opportunity`
+--
+
+CREATE TABLE `opportunity` (
+  `id` int(11) NOT NULL,
+  `created_by_id` int(11) DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `company` varchar(255) NOT NULL,
+  `contact` varchar(255) NOT NULL,
+  `value` int(11) NOT NULL,
+  `probability` int(11) DEFAULT NULL,
+  `status` varchar(50) NOT NULL,
+  `close_date` date NOT NULL,
+  `description` longtext DEFAULT NULL,
+  `notified_to_admin` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `opportunity`
+--
+
+INSERT INTO `opportunity` (`id`, `created_by_id`, `name`, `company`, `contact`, `value`, `probability`, `status`, `close_date`, `description`, `notified_to_admin`) VALUES
+(44, 27, 'progress', 'aaa', '123644', 877, NULL, 'en cours', '2222-01-20', 'aze', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `projet`
 --
 
 CREATE TABLE `projet` (
@@ -96,7 +112,7 @@ CREATE TABLE `projet` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `projet`
+-- Déchargement des données de la table `projet`
 --
 
 INSERT INTO `projet` (`id`, `nom`, `societe`, `date_pub`, `deadline`, `suivi`, `avis`, `cahier_de_charge`, `motif`, `offre_technique`, `offre_administrative`, `partie_financiere`, `caution`, `montant_caution`, `etat_caution`) VALUES
@@ -111,36 +127,43 @@ INSERT INTO `projet` (`id`, `nom`, `societe`, `date_pub`, `deadline`, `suivi`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user`
+-- Structure de la table `user`
 --
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
   `email` varchar(180) NOT NULL,
   `roles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '(DC2Type:json)' CHECK (json_valid(`roles`)),
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  `is_new` tinyint(1) NOT NULL,
+  `name` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `user`
+-- Déchargement des données de la table `user`
 --
 
-INSERT INTO `user` (`id`, `email`, `roles`, `password`) VALUES
-(1, 'admin@dashboard.com', '[\"ROLE_ADMIN\"]', '$2y$13$09kFRwwCPdYW8HGICswWeuTXSYFU/X.FEwUJXbWIxgPp6bYdkCd.6'),
-(3, 'mbenfradj@progress.tn', '[]', '$2y$13$Gzt4S36.uCGmbRfmmUGnwuEG0VmbXy0NTEc34/taTriKpyrPY0T/O');
+INSERT INTO `user` (`id`, `email`, `roles`, `password`, `is_new`, `name`) VALUES
+(5, 'benhassenilef20@gmail.com', '[\"ROLE_ADMIN\"]', '$2y$13$sjB7VD3GYO3g6dT226AUjuiD58anENw4aFB31ACInZPwaoFar8xQ2', 0, 'raed'),
+(12, 'admin@gmail.com', '[\"ROLE_ADMIN\"]', '$2y$10$IIN1PNmKX3T2XkdrQ9S2ieFZjOxRbgyfmWhm3cqfAHWIQUJRmjOcS', 0, NULL),
+(13, 'raedbouhali@gmail.com', '[\"ROLE_USER\"]', '$2y$13$XwFq7q3mUSpsR/SGwV14i.CCcW7U6uSd58UkRUdqtb2.MiqtTPVMi', 0, NULL),
+(26, 'raed@gmail.com', '[\"ROLE_ADMIN\"]', '$2y$13$gsK6sYpKY4bnqtbSx8zifO6snc5saXcjPETNF9sEzEQPoSOBvm9Ge', 0, NULL),
+(27, 'RH@gmail.com', '[\"ROLE_RH\"]', '$2y$13$InbGOORk2QKqS1PQJCh/nO2Nor3gmRvU4dWPJuBUI1v4bcxaXqeOa', 0, 'RH');
 
 --
--- Indexes for dumped tables
+-- Index pour les tables déchargées
 --
 
 --
--- Indexes for table `doctrine_migration_versions`
+-- Index pour la table `message`
 --
-ALTER TABLE `doctrine_migration_versions`
-  ADD PRIMARY KEY (`version`);
+ALTER TABLE `message`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_B6BD307FF624B39D` (`sender_id`),
+  ADD KEY `IDX_B6BD307FCD53EDB6` (`receiver_id`);
 
 --
--- Indexes for table `messenger_messages`
+-- Index pour la table `messenger_messages`
 --
 ALTER TABLE `messenger_messages`
   ADD PRIMARY KEY (`id`),
@@ -149,39 +172,75 @@ ALTER TABLE `messenger_messages`
   ADD KEY `IDX_75EA56E016BA31DB` (`delivered_at`);
 
 --
--- Indexes for table `projet`
+-- Index pour la table `opportunity`
+--
+ALTER TABLE `opportunity`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_8389C3D7B03A8386` (`created_by_id`);
+
+--
+-- Index pour la table `projet`
 --
 ALTER TABLE `projet`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `user`
+-- Index pour la table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UNIQ_IDENTIFIER_EMAIL` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
--- AUTO_INCREMENT for table `messenger_messages`
+-- AUTO_INCREMENT pour la table `message`
+--
+ALTER TABLE `message`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `messenger_messages`
 --
 ALTER TABLE `messenger_messages`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `projet`
+-- AUTO_INCREMENT pour la table `opportunity`
+--
+ALTER TABLE `opportunity`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+
+--
+-- AUTO_INCREMENT pour la table `projet`
 --
 ALTER TABLE `projet`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `user`
+-- AUTO_INCREMENT pour la table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `message`
+--
+ALTER TABLE `message`
+  ADD CONSTRAINT `FK_B6BD307FCD53EDB6` FOREIGN KEY (`receiver_id`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `FK_B6BD307FF624B39D` FOREIGN KEY (`sender_id`) REFERENCES `user` (`id`);
+
+--
+-- Contraintes pour la table `opportunity`
+--
+ALTER TABLE `opportunity`
+  ADD CONSTRAINT `FK_8389C3D7B03A8386` FOREIGN KEY (`created_by_id`) REFERENCES `user` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

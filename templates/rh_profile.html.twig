@@ -422,8 +422,8 @@
         <div class="edit-form-section">
             <h2 class="section-title">✏️ Edit Profile</h2>
             
-            <div class="success-message" id="successMessage">
-                ✅ Profile updated successfully!
+            <div class="success-message" id="successMessage" {% if app.flashes('success') is not empty %}style="display: block;"{% endif %}>
+                ✅ {% for message in app.flashes('success') %}{{ message }}{% else %}Profile updated successfully!{% endfor %}
             </div>
             
             <form method="post" enctype="multipart/form-data" id="profileForm">
@@ -456,7 +456,14 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', function() {
+                // Masquer le message de succès après 3 secondes s'il est affiché
+                var successMessage = document.getElementById('successMessage');
+                if (successMessage.style.display === 'block') {
+                    setTimeout(function() {
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                }
             // Mise à jour en temps réel du nom affiché
             const nameInput = document.getElementById('profile_name');
             const displayName = document.getElementById('display-name');
@@ -484,12 +491,8 @@
                 profileAvatar.textContent = '';
             }
 
-            // Charger le nom personnalisé
-            var customName = localStorage.getItem('customProfileName');
-            if (customName && customName.trim()) {
-                nameInput.value = customName;
-                displayName.textContent = customName.trim();
-            }
+            // Ne pas utiliser localStorage pour le nom, utiliser uniquement les données de la base de données
+            // Le nom est déjà chargé depuis app.user.name dans le formulaire
 
             // Gérer le changement d'avatar
             avatarInput.addEventListener('change', function(e) {
@@ -515,27 +518,18 @@
                 }
             });
 
-            // Gérer la soumission du formulaire
+            // Gérer la soumission du formulaire - permettre la soumission au serveur
             document.getElementById('profileForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+                // Ne pas empêcher la soumission du formulaire pour permettre l'envoi au serveur
+                // e.preventDefault();
                 
                 var name = document.getElementById('profile_name').value;
                 if (name && name.trim()) {
-                    localStorage.setItem('customProfileName', name.trim());
+                    // Ne pas stocker dans localStorage pour éviter les conflits avec la base de données
+                    // localStorage.setItem('customProfileName', name.trim());
                     
-                    // Mettre à jour la navbar
-                    document.querySelectorAll('.user-name-or-email').forEach(function(el) {
-                        el.textContent = name.trim();
-                    });
-
-                    // Afficher le message de succès
-                    var successMessage = document.getElementById('successMessage');
-                    successMessage.style.display = 'block';
-                    
-                    // Masquer le message après 3 secondes
-                    setTimeout(function() {
-                        successMessage.style.display = 'none';
-                    }, 3000);
+                    // La mise à jour de la navbar se fera après le rechargement de la page
+                    console.log('Formulaire soumis avec le nom: ' + name.trim());
                 }
             });
         });
@@ -555,4 +549,4 @@
             }
         }
     </script>
-{% endblock %} 
+{% endblock %}
