@@ -422,7 +422,13 @@
         <div class="edit-form-section">
             <h2 class="section-title">✏️ Edit Profile</h2>
             
-            <div class="success-message" id="successMessage">
+            {% for message in app.flashes('success') %}
+                <div class="success-message" id="successMessage" style="display: block;">
+                    ✅ {{ message }}
+                </div>
+            {% endfor %}
+            
+            <div class="success-message" id="successMessage" style="display: none;">
                 ✅ Profile updated successfully!
             </div>
             
@@ -448,6 +454,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Masquer automatiquement les messages flash après 3 secondes
+            var flashMessages = document.querySelectorAll('.success-message');
+            flashMessages.forEach(function(message) {
+                if (message.style.display === 'block') {
+                    setTimeout(function() {
+                        message.style.display = 'none';
+                    }, 3000);
+                }
+            });
+            
             // Charger l'avatar personnalisé depuis localStorage
             var avatarUrl = localStorage.getItem('customProfileAvatar');
             var avatar = document.getElementById('profile-avatar');
@@ -459,11 +475,11 @@
                 avatar.textContent = '';
             }
 
-            // Charger le nom personnalisé
-            var customName = localStorage.getItem('customProfileName');
-            if (customName && customName.trim()) {
-                document.getElementById('profile_name').value = customName;
-            }
+            // Ne pas charger le nom depuis localStorage pour utiliser celui de la base de données
+            // var customName = localStorage.getItem('customProfileName');
+            // if (customName && customName.trim()) {
+            //     document.getElementById('profile_name').value = customName;
+            // }
 
             // Gérer le changement d'avatar
             document.getElementById('avatar-input').addEventListener('change', function(e) {
@@ -491,25 +507,15 @@
 
             // Gérer la soumission du formulaire
             document.getElementById('profileForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+                // Permettre la soumission normale du formulaire au serveur
+                // e.preventDefault(); -- commenté pour permettre la soumission au serveur
                 
                 var name = document.getElementById('profile_name').value;
                 if (name && name.trim()) {
-                    localStorage.setItem('customProfileName', name.trim());
+                    // Ne pas utiliser localStorage pour permettre la persistance en base de données
+                    // localStorage.setItem('customProfileName', name.trim()); -- commenté
                     
-                    // Mettre à jour la navbar
-                    document.querySelectorAll('.user-name-or-email').forEach(function(el) {
-                        el.textContent = name.trim();
-                    });
-
-                    // Afficher le message de succès
-                    var successMessage = document.getElementById('successMessage');
-                    successMessage.style.display = 'block';
-                    
-                    // Masquer le message après 3 secondes
-                    setTimeout(function() {
-                        successMessage.style.display = 'none';
-                    }, 3000);
+                    // La mise à jour de la navbar se fera automatiquement après le rechargement de la page
                 }
             });
         });

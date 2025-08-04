@@ -201,7 +201,7 @@
     {% include 'navbar.html.twig' %}
     
     <div class="main-container">
-        <a href="{{ path('rh_home') }}" class="btn-back">
+                    <a href="{{ path('rh_dashboard') }}" class="btn-back">
             ← Back to Opportunities
         </a>
         
@@ -324,7 +324,7 @@
                             
                             // Rediriger après 3 secondes (plus de temps pour lire les avertissements)
                             setTimeout(() => {
-                                window.location.href = '{{ path('rh_home') }}';
+                                window.location.href = '{{ path('rh_dashboard') }}';
                             }, 3000);
                         } else {
                             throw new Error(data.error || 'Unknown error');

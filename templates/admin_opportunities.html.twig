@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block title %}Opportunities Dashboard{% endblock %}
+{% block title %}Admin - Manage Opportunities{% endblock %}
 {% block stylesheets %}
 <style>
     body { 
@@ -10,7 +10,7 @@
         margin: 0;
         padding: 0;
     }
-    .container { max-width: 900px; margin: 60px auto 0 auto; padding: 20px; }
+    .container { max-width: 1200px; margin: 60px auto 0 auto; padding: 20px; }
     .main-content { display: flex; flex-direction: column; align-items: center; }
     .opportunities-section {
         background: #fff;
@@ -47,8 +47,6 @@
         text-shadow: 0 2px 4px rgba(0, 180, 255, 0.1);
         margin: 0;
     }
-    .btn-primary { background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%); color: #222; border: none; padding: 15px 40px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 180, 255, 0.2); }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 180, 255, 0.3); color: #0077b6; }
     .opportunity-card { 
         background: #fff;
         border-radius: 20px;
@@ -70,20 +68,7 @@
         background: linear-gradient(90deg, #00b4ff 0%, #ffe066 100%);
     }
     .opportunity-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0, 180, 255, 0.15); }
-    .opportunity-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .opportunity-actions { display: flex; gap: 10px; align-items: center; }
-    .btn-delete { background: #ff4757; color: white; border: none; padding: 6px 18px; border-radius: 20px; cursor: pointer; font-size: 1rem; font-weight: 700; transition: all 0.3s ease; }
-    .btn-delete:hover { background: #ff3742; transform: translateY(-1px); box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3); }
-    .btn-edit { background: linear-gradient(90deg, #ffe066 0%, #00b4ff 100%); color: #222; border: none; padding: 6px 18px; border-radius: 20px; cursor: pointer; font-size: 1rem; font-weight: 700; transition: all 0.3s ease; }
-    .btn-edit:hover { background: linear-gradient(90deg, #fffbe0 0%, #00b4ff 100%); color: #0077b6; }
-    .btn-inform-admin { background: linear-gradient(90deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 6px 18px; border-radius: 20px; cursor: pointer; font-size: 1rem; font-weight: 700; transition: all 0.3s ease; }
-    .btn-inform-admin:hover { background: linear-gradient(90deg, #218838 0%, #1ea085 100%); color: white; transform: translateY(-1px); box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); }
-    .btn-inform-admin:disabled { background: #6c757d; color: #adb5bd; cursor: not-allowed; transform: none; box-shadow: none; }
-    .btn-save-notifications { background: linear-gradient(90deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 13px 36px; border-radius: 30px; cursor: pointer; font-weight: 700; font-size: 1.1rem; transition: all 0.3s, box-shadow 0.2s; box-shadow: 0 2px 8px rgba(40,167,69,0.10); outline: none; }
-    .btn-save-notifications:hover { background: linear-gradient(90deg, #218838 0%, #1ea085 100%); color: white; box-shadow: 0 4px 16px rgba(40,167,69,0.16); transform: translateY(-2px) scale(1.04); }
-    .inform-admin-checkbox { transition: all 0.3s ease; }
-    .inform-admin-checkbox input[type="checkbox"]:checked { accent-color: #28a745; }
-    .inform-admin-checkbox input[type="checkbox"]:disabled { opacity: 0.6; cursor: not-allowed; }
+    .opportunity-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
     .opportunity-title { font-size: 1.3rem; font-weight: 800; color: #00b4ff; margin-bottom: 4px; }
     .opportunity-company { font-size: 1rem; color: #666; font-weight: 600; }
     .opportunity-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
@@ -92,9 +77,50 @@
     .detail-value { font-size: 1rem; color: #222; font-weight: 700; }
     .value-amount { color: #00b4ff; }
     .opportunity-description { color: #666; font-size: 0.95rem; line-height: 1.5; margin-bottom: 16px; }
-    .probability-bar { width: 100%; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; margin-top: 5px; }
-    .probability-fill { height: 100%; background: linear-gradient(90deg, #ff4444, #ffaa00, #00aa00); border-radius: 3px; transition: width 0.8s ease; }
-
+    .decision-form { 
+        background: #f8f9ff; 
+        padding: 16px; 
+        border-radius: 12px; 
+        border: 2px solid #e0e8ff;
+        margin-top: 16px;
+    }
+    .decision-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        background: #fff;
+        color: #333;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    .decision-select:focus {
+        outline: none;
+        border-color: #00b4ff;
+        box-shadow: 0 0 0 3px rgba(0, 180, 255, 0.1);
+    }
+    .decision-select option[value="approved"] { color: #28a745; }
+    .decision-select option[value="rejected"] { color: #ff4757; }
+    .decision-select option[value="pending"] { color: #ffc107; }
+    .decision-select option[value="under_review"] { color: #00b4ff; }
+    .btn-update-decision {
+        background: linear-gradient(135deg, #00b4ff 0%, #ffe066 100%);
+        color: #222;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+    }
+    .btn-update-decision:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 180, 255, 0.3);
+    }
     @media (max-width: 768px) {
         .container { margin: 40px 15px 0 15px; padding: 10px; }
         .opportunities-section { padding: 30px 20px; }
@@ -107,6 +133,7 @@
     }
 </style>
 {% endblock %}
+
 {% block body %}
 {% include 'navbar.html.twig' %}
 <div class="container">
@@ -123,15 +150,7 @@
                 </div>
             {% endfor %}
             <div class="section-header">
-                <h2>Opportunities</h2>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <a href="{{ path('rh_test_email') }}" class="btn-test-email" style="background: linear-gradient(90deg, #ff6b6b 0%, #ee5a24 100%); color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: 700; font-size: 0.9rem; transition: all 0.3s ease; text-decoration: none;">
-                        📧 Test Email
-                    </a>
-                    <a href="{{ path('rh_add_opportunity_page') }}" class="btn-primary" style="text-decoration: none; display: inline-block;">
-                        ➕ Add Opportunity
-                    </a>
-                </div>
+                <h2>Manage Opportunities</h2>
             </div>
             <div id="opportunitiesList">
                 {% for opp in opportunities %}
@@ -140,21 +159,6 @@
                             <div>
                                 <div class="opportunity-title">{{ opp.name }}</div>
                                 <div class="opportunity-company">{{ opp.company }}</div>
-                            </div>
-                            <div class="opportunity-actions">
-                                <form method="post" action="{{ path('rh_inform_admin', {'id': opp.id}) }}" style="display:inline;">
-                                    <button type="submit" class="btn-inform-admin" title="Inform Administrator immediately" {% if opp.notifiedToAdmin %}disabled{% endif %}>
-                                        {% if opp.notifiedToAdmin %}
-                                            ✅ Already Notified
-                                        {% else %}
-                                            📧 Inform Admin
-                                        {% endif %}
-                                    </button>
-                                </form>
-                                <form method="post" action="{{ path('rh_delete_opportunity', {'id': opp.id}) }}" style="display:inline;">
-                                    <button type="submit" class="btn-delete" title="Delete this opportunity">🗑️</button>
-                                </form>
-                                <a href="{{ path('rh_edit_opportunity', {'id': opp.id}) }}" class="btn-edit" title="Edit this opportunity">✏️</a>
                             </div>
                         </div>
                         <div class="opportunity-details">
@@ -180,29 +184,25 @@
                                     {% endif %}
                                 </span>
                             </div>
-                            <div class="detail-item">
-                                <span class="detail-label">🎯 Decision:</span>
-                                <span class="detail-value">
-                                    {% if opp.status == 'approved' %}
-                                        <span style="color: #28a745; font-weight: 600;">✅ Approved</span>
-                                    {% elseif opp.status == 'rejected' %}
-                                        <span style="color: #ff4757; font-weight: 600;">❌ Rejected</span>
-                                    {% elseif opp.status == 'pending' %}
-                                        <span style="color: #ffc107; font-weight: 600;">⏳ Pending</span>
-                                    {% elseif opp.status == 'under_review' %}
-                                        <span style="color: #00b4ff; font-weight: 600;">🔍 Under Review</span>
-                                    {% else %}
-                                        <span style="color: #6c757d; font-weight: 600;">📋 Not Set</span>
-                                    {% endif %}
-                                </span>
-                            </div>
                         </div>
                         {% if opp.description %}
                             <div class="opportunity-description">{{ opp.description }}</div>
                         {% endif %}
+                        <div class="decision-form">
+                            <form method="post" action="{{ path('admin_update_decision', {'id': opp.id}) }}">
+                                <label for="decision_{{ opp.id }}" style="font-weight: 600; color: #00b4ff; margin-bottom: 8px; display: block;">🎯 Decision:</label>
+                                <select name="decision" id="decision_{{ opp.id }}" class="decision-select" onchange="this.form.submit()">
+                                    <option value="" {% if not opp.status or opp.status == '' %}selected{% endif %}>Select...</option>
+                                    <option value="approved" {% if opp.status == 'approved' %}selected{% endif %}>✅ Approved</option>
+                                    <option value="rejected" {% if opp.status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
+                                    <option value="pending" {% if opp.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
+                                    <option value="under_review" {% if opp.status == 'under_review' %}selected{% endif %}>🔍 Under Review</option>
+                                </select>
+                            </form>
+                        </div>
                     </div>
                 {% else %}
-                    <div>No opportunities found.</div>
+                    <div style="text-align: center; color: #666; font-size: 1.1rem;">No opportunities found.</div>
                 {% endfor %}
             </div>
         </section>

@@ -20,12 +20,10 @@ use Twig\Environment;
 class RHDashboardController extends AbstractController
 {
     #[Route('/rh/home', name: 'rh_home')]
-    public function home(OpportunityRepository $opportunityRepository): Response
+    public function home(): Response
     {
-        $opportunities = $opportunityRepository->findAll();
-        return $this->render('rh_home.html.twig', [
-            'opportunities' => $opportunities
-        ]);
+        // Redirect to the main dashboard instead of showing duplicate page
+        return $this->redirectToRoute('rh_dashboard');
     }
 
     #[Route('/rh/dashboard', name: 'rh_dashboard')]
@@ -102,9 +100,11 @@ class RHDashboardController extends AbstractController
         if ($opportunity) {
             $entityManager->remove($opportunity);
             $entityManager->flush();
-            return new JsonResponse(['success' => true]);
+            $this->addFlash('success', '✅ Opportunity deleted successfully!');
+        return $this->redirectToRoute('rh_dashboard');
         } else {
-            return new JsonResponse(['success' => false, 'error' => 'Opportunity not found'], 404);
+            $this->addFlash('error', '❌ Opportunity not found!');
+            return $this->redirectToRoute('rh_dashboard');
         }
     }
 
@@ -207,7 +207,9 @@ class RHDashboardController extends AbstractController
                 $trimmedName = trim($name);
                 error_log('Setting name to: ' . $trimmedName);
                 
+                // Mettre à jour le nom dans l'utilisateur actuel et dans la session
                 $freshUser->setName($trimmedName);
+                $user->setName($trimmedName); // Mettre à jour l'utilisateur en session également
                 
                 try {
                     $entityManager->flush();
@@ -217,6 +219,9 @@ class RHDashboardController extends AbstractController
                     $entityManager->clear();
                     $updatedUser = $userRepository->find($freshUser->getId());
                     error_log('Updated user name: ' . $updatedUser->getName());
+                    
+                    // Rafraîchir la session avec les nouvelles données
+                    $this->container->get('security.token_storage')->getToken()->setUser($updatedUser);
                     
                     $this->addFlash('success', 'Profile updated successfully!');
                 } catch (\Exception $e) {
@@ -240,17 +245,20 @@ class RHDashboardController extends AbstractController
             $email = (new Email())
                 ->from($this->getParameter('app.email_sender'))
                 ->to($this->getParameter('app.admin_email'))
-                ->subject('Test Email from RH System')
-                ->html('<h1>Test Email</h1><p>This is a test email from the RH system.</p>');
+                ->subject('Test Email from RH System - ' . date('Y-m-d H:i:s'))
+                ->html('<h1>Test Email</h1><p>This is a test email from the RH system sent at ' . date('Y-m-d H:i:s') . '</p><p>If you receive this email, the email system is working correctly!</p>');
 
-            error_log('Sending test email...');
+            error_log('Sending test email to: ' . $this->getParameter('app.admin_email'));
             $mailer->send($email);
             error_log('Test email sent successfully!');
             
-            return new Response('Test email sent successfully! Check the logs.');
+            $this->addFlash('success', '✅ Test email sent successfully! Check your inbox at benhassenilef20@gmail.com');
+            return $this->redirectToRoute('rh_dashboard');
         } catch (\Exception $e) {
             error_log('Test email error: ' . $e->getMessage());
-            return new Response('Test email failed: ' . $e->getMessage());
+            error_log('Test email error details: ' . $e->getTraceAsString());
+            $this->addFlash('error', '❌ Test email failed: ' . $e->getMessage());
+            return $this->redirectToRoute('rh_dashboard');
         }
     }
 
@@ -296,5 +304,110 @@ class RHDashboardController extends AbstractController
         }
 
         return $this->redirectToRoute('rh_home');
+    }
+
+    #[Route('/rh/inform-admin/{id}', name: 'rh_inform_admin', methods: ['POST'])]
+    public function informAdminForOpportunity(int $id, OpportunityRepository $opportunityRepository, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
+    {
+        $opportunity = $opportunityRepository->find($id);
+        
+        if (!$opportunity) {
+            $this->addFlash('error', 'Opportunity not found.');
+            return $this->redirectToRoute('rh_dashboard');
+        }
+
+        if ($opportunity->getNotifiedToAdmin()) {
+            $this->addFlash('info', 'This opportunity has already been notified to the administrator.');
+            return $this->redirectToRoute('rh_dashboard');
+        }
+
+        $user = $this->getUser();
+        
+        // Mark the opportunity as notified
+        $opportunity->setNotifiedToAdmin(true);
+        $entityManager->flush();
+
+        // Send email to administrator
+        try {
+            $email = (new Email())
+                ->from($this->getParameter('app.email_sender'))
+                ->to($this->getParameter('app.admin_email'))
+                ->subject('RH Notification - New Opportunity: ' . $opportunity->getName())
+                ->html($this->renderView('emails/rh_inform_single_opportunity.html.twig', [
+                    'rh_user' => $user,
+                    'opportunity' => $opportunity
+                ]));
+
+            error_log('Attempting to send email to admin about opportunity: ' . $opportunity->getName());
+            $mailer->send($email);
+            error_log('Email sent successfully!');
+            $this->addFlash('success', '✅ Administrator has been notified about this opportunity.');
+        } catch (\Exception $e) {
+            error_log('Email error: ' . $e->getMessage());
+            error_log('Email error details: ' . $e->getTraceAsString());
+            $this->addFlash('warning', '⚠️ Opportunity marked as notified, but email could not be sent. Error: ' . $e->getMessage());
+            $this->addFlash('info', 'Please check email configuration in .env.local or contact system administrator.');
+        }
+
+        return $this->redirectToRoute('rh_dashboard');
+    }
+
+    #[Route('/rh/inform-admin-multiple', name: 'rh_inform_admin_multiple', methods: ['POST'])]
+    public function informAdminForMultipleOpportunities(Request $request, OpportunityRepository $opportunityRepository, EntityManagerInterface $entityManager, MailerInterface $mailer): JsonResponse
+    {
+        $opportunityIds = $request->request->get('opportunityIds', []);
+        
+        if (empty($opportunityIds)) {
+            return new JsonResponse(['success' => false, 'error' => 'No opportunities selected']);
+        }
+
+        $opportunities = $opportunityRepository->findBy(['id' => $opportunityIds]);
+        $user = $this->getUser();
+        $notifiedCount = 0;
+        $alreadyNotifiedCount = 0;
+
+        foreach ($opportunities as $opportunity) {
+            if (!$opportunity->getNotifiedToAdmin()) {
+                $opportunity->setNotifiedToAdmin(true);
+                $notifiedCount++;
+            } else {
+                $alreadyNotifiedCount++;
+            }
+        }
+
+        if ($notifiedCount > 0) {
+            $entityManager->flush();
+        }
+
+        // Send email to administrator
+        try {
+            $email = (new Email())
+                ->from($this->getParameter('app.email_sender'))
+                ->to($this->getParameter('app.admin_email'))
+                ->subject('RH Notification - Multiple New Opportunities')
+                ->html($this->renderView('emails/rh_inform_multiple_opportunities.html.twig', [
+                    'rh_user' => $user,
+                    'opportunities' => $opportunities,
+                    'notified_count' => $notifiedCount,
+                    'already_notified_count' => $alreadyNotifiedCount
+                ]));
+
+            error_log('Attempting to send email to admin about multiple opportunities');
+            $mailer->send($email);
+            error_log('Email sent successfully!');
+            
+            $message = "✅ Administrator has been notified about {$notifiedCount} opportunity(ies)";
+            if ($alreadyNotifiedCount > 0) {
+                $message .= " ({$alreadyNotifiedCount} were already notified)";
+            }
+            
+            return new JsonResponse(['success' => true, 'message' => $message]);
+        } catch (\Exception $e) {
+            error_log('Email error: ' . $e->getMessage());
+            error_log('Email error details: ' . $e->getTraceAsString());
+            
+            $message = "⚠️ Opportunities marked as notified, but email could not be sent. Error: " . $e->getMessage();
+            return new JsonResponse(['success' => false, 'error' => $message]);
+        }
     }
 }

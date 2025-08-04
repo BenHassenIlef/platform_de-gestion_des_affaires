@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RH Notification - Single Opportunity</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; padding: 20px; border-radius: 10px; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .user-info { background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 15px 0; }
+        .opportunity-details { background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #28a745; }
+        .opportunity-header { background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .detail-row { display: flex; justify-content: space-between; margin: 8px 0; padding: 5px 0; border-bottom: 1px solid #eee; }
+        .detail-label { font-weight: bold; color: #555; }
+        .detail-value { color: #333; }
+        .value-highlight { color: #28a745; font-weight: bold; }
+        .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📧 RH Notification - New Opportunity</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Hello Administrator,</h2>
+            
+            <p>A RH user has notified you about a new opportunity that requires your immediate attention.</p>
+            
+            <div class="user-info">
+                <h3>👤 RH User Information:</h3>
+                <p><strong>Name:</strong> {{ rh_user.name ?? 'Not specified' }}</p>
+                <p><strong>Email:</strong> {{ rh_user.email }}</p>
+                <p><strong>Role:</strong> RH</p>
+                <p><strong>Notification Date:</strong> {{ "now"|date("Y-m-d H:i:s") }}</p>
+            </div>
+            
+            <div class="opportunity-details">
+                <h3>📋 Opportunity Details:</h3>
+                
+                <div class="opportunity-header">
+                    <h4 style="margin: 0; color: #28a745;">{{ opportunity.name }}</h4>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">🏢 Company:</span>
+                    <span class="detail-value">{{ opportunity.company }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">👤 Contact Person:</span>
+                    <span class="detail-value">{{ opportunity.contact }}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">💰 Value:</span>
+                    <span class="detail-value value-highlight">{{ opportunity.value }} DT</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">📅 Expected Close Date:</span>
+                    <span class="detail-value">{{ opportunity.closeDate ? opportunity.closeDate|date('Y-m-d') : 'Not specified' }}</span>
+                </div>
+                
+                {% if opportunity.description %}
+                <div class="detail-row">
+                    <span class="detail-label">📝 Description:</span>
+                    <span class="detail-value">{{ opportunity.description }}</span>
+                </div>
+                {% endif %}
+            </div>
+            
+            <p><strong>Action Required:</strong> Please log into the system to review and make a decision on this opportunity.</p>
+            
+            <p style="background: #fff3cd; padding: 10px; border-radius: 5px; border-left: 4px solid #ffc107;">
+                <strong>⚠️ Priority:</strong> This opportunity has been marked for immediate administrator review.
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated notification from the HR Management System.</p>
+            <p>Please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html> 
