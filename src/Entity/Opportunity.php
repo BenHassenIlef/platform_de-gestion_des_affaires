@@ -5,6 +5,9 @@ namespace App\Entity;
 use App\Repository\OpportunityRepository;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User;
+use App\Entity\OpportunityFile;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: OpportunityRepository::class)]
 class Opportunity
@@ -43,6 +46,9 @@ class Opportunity
 
     #[ORM\Column(type: 'boolean', nullable: false, options: ['default' => false])]
     private ?bool $notifiedToAdmin = false;
+
+    #[ORM\OneToMany(mappedBy: 'opportunity', targetEntity: OpportunityFile::class, cascade: ['persist', 'remove'])]
+    private Collection $files;
 
     public function getId(): ?int
     {
@@ -162,6 +168,42 @@ class Opportunity
     public function setNotifiedToAdmin(?bool $notifiedToAdmin): self
     {
         $this->notifiedToAdmin = $notifiedToAdmin;
+
+        return $this;
+    }
+
+    public function __construct()
+    {
+        $this->notifiedToAdmin = false;
+        $this->files = new ArrayCollection();
+    }
+
+    /**
+     * @return Collection<int, OpportunityFile>
+     */
+    public function getFiles(): Collection
+    {
+        return $this->files;
+    }
+
+    public function addFile(OpportunityFile $file): self
+    {
+        if (!$this->files->contains($file)) {
+            $this->files->add($file);
+            $file->setOpportunity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFile(OpportunityFile $file): self
+    {
+        if ($this->files->removeElement($file)) {
+            // set the owning side to null (unless already changed)
+            if ($file->getOpportunity() === $this) {
+                $file->setOpportunity(null);
+            }
+        }
 
         return $this;
     }

@@ -155,6 +155,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function updateLastActivity()
     {
-        $this->setLastActivity(new \DateTime());
+        $this->setLastActivity(new \DateTime('now', new \DateTimeZone('Africa/Tunis')));
     }
 }

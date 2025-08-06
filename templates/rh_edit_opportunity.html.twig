@@ -229,8 +229,80 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="contactPerson">Contact Person *</label>
-                        <input type="text" id="contactPerson" name="contactPerson" value="{{ opportunity.contact }}" required placeholder="Enter contact person">
+                        <label for="contactPerson">Contact Phone Number</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select id="countryCode" style="width: 100px; padding: 15px 10px; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1rem; background: #f8fbff; cursor: pointer;">
+                                <option value="+216" selected>🇹🇳 +216</option>
+                                <option value="+33">🇫🇷 +33</option>
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+49">🇩🇪 +49</option>
+                                <option value="+39">🇮🇹 +39</option>
+                                <option value="+34">🇪🇸 +34</option>
+                                <option value="+31">🇳🇱 +31</option>
+                                <option value="+32">🇧🇪 +32</option>
+                                <option value="+41">🇨🇭 +41</option>
+                                <option value="+46">🇸🇪 +46</option>
+                                <option value="+47">🇳🇴 +47</option>
+                                <option value="+45">🇩🇰 +45</option>
+                                <option value="+358">🇫🇮 +358</option>
+                                <option value="+48">🇵🇱 +48</option>
+                                <option value="+420">🇨🇿 +420</option>
+                                <option value="+36">🇭🇺 +36</option>
+                                <option value="+43">🇦🇹 +43</option>
+                                <option value="+351">🇵🇹 +351</option>
+                                <option value="+30">🇬🇷 +30</option>
+                                <option value="+90">🇹🇷 +90</option>
+                                <option value="+7">🇷🇺 +7</option>
+                                <option value="+86">🇨🇳 +86</option>
+                                <option value="+81">🇯🇵 +81</option>
+                                <option value="+82">🇰🇷 +82</option>
+                                <option value="+91">🇮🇳 +91</option>
+                                <option value="+61">🇦🇺 +61</option>
+                                <option value="+64">🇳🇿 +64</option>
+                                <option value="+27">🇿🇦 +27</option>
+                                <option value="+20">🇪🇬 +20</option>
+                                <option value="+212">🇲🇦 +212</option>
+                                <option value="+213">🇩🇿 +213</option>
+                                <option value="+225">🇨🇮 +225</option>
+                                <option value="+234">🇳🇬 +234</option>
+                                <option value="+254">🇰🇪 +254</option>
+                                <option value="+966">🇸🇦 +966</option>
+                                <option value="+971">🇦🇪 +971</option>
+                                <option value="+974">🇶🇦 +974</option>
+                                <option value="+965">🇰🇼 +965</option>
+                                <option value="+973">🇧🇭 +973</option>
+                                <option value="+968">🇴🇲 +968</option>
+                                <option value="+962">🇯🇴 +962</option>
+                                <option value="+961">🇱🇧 +961</option>
+                                <option value="+963">🇸🇾 +963</option>
+                                <option value="+964">🇮🇶 +964</option>
+                                <option value="+98">🇮🇷 +98</option>
+                                <option value="+93">🇦🇫 +93</option>
+                                <option value="+92">🇵🇰 +92</option>
+                                <option value="+880">🇧🇩 +880</option>
+                                <option value="+94">🇱🇰 +94</option>
+                                <option value="+95">🇲🇲 +95</option>
+                                <option value="+66">🇹🇭 +66</option>
+                                <option value="+84">🇻🇳 +84</option>
+                                <option value="+60">🇲🇾 +60</option>
+                                <option value="+65">🇸🇬 +65</option>
+                                <option value="+62">🇮🇩 +62</option>
+                                <option value="+63">🇵🇭 +63</option>
+                                <option value="+52">🇲🇽 +52</option>
+                                <option value="+55">🇧🇷 +55</option>
+                                <option value="+54">🇦🇷 +54</option>
+                                <option value="+56">🇨🇱 +56</option>
+                                <option value="+57">🇨🇴 +57</option>
+                                <option value="+58">🇻🇪 +58</option>
+                                <option value="+51">🇵🇪 +51</option>
+                                <option value="+593">🇪🇨 +593</option>
+                                <option value="+595">🇵🇾 +595</option>
+                                <option value="+598">🇺🇾 +598</option>
+                                <option value="+591">🇧🇴 +591</option>
+                            </select>
+                            <input type="tel" id="contactPerson" name="contactPerson" value="{{ opportunity.contact }}" placeholder="Enter phone number" pattern="[0-9\s\-\(\)]+" maxlength="15" style="flex: 1;">
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -248,16 +320,7 @@
                         <textarea id="description" name="description" rows="4" placeholder="Enter opportunity description (optional)">{{ opportunity.description }}</textarea>
                     </div>
                     
-                    <div class="form-group full-width" style="margin-top: 15px;">
-                        <label class="checkbox-container" style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="informAdmin" name="informAdmin" style="margin-right: 10px; width: auto;" {% if opportunity.notifiedToAdmin %}checked{% endif %}>
-                            <span style="font-weight: 600; color: #00b4ff;">📧 Inform Administrator immediately</span>
-                        </label>
-                        <p style="margin-top: 5px; color: #666; font-size: 0.9rem;">Check this box to notify the administrator about this opportunity right away.</p>
-                        {% if opportunity.notifiedToAdmin %}
-                            <p style="margin-top: 5px; color: #28a745; font-size: 0.9rem; font-weight: 600;">✅ This opportunity has already been notified to the administrator.</p>
-                        {% endif %}
-                    </div>
+
                 </div>
 
                 <button type="submit" class="btn-save">
@@ -268,6 +331,17 @@
     </div>
 
     <script>
+        // Force reload to clear cache
+        if (performance.navigation.type === 1) {
+            // Page was reloaded, clear any cached data
+            sessionStorage.removeItem('countryCodeCache');
+        }
+        
+        // Force reload if cache is detected
+        if (sessionStorage.getItem('countryCodeCache')) {
+            location.reload(true);
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('opportunityForm');
             const successMessage = document.getElementById('successMessage');
@@ -350,6 +424,156 @@
                         this.style.borderColor = '#e0e0e0';
                     }
                 });
+            });
+            
+            // Date validation
+            const closeDateInput = document.getElementById('closeDate');
+            
+            // Set minimum date to today
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
+            closeDateInput.setAttribute('min', todayString);
+            
+            // Add validation on form submission
+            form.addEventListener('submit', function(e) {
+                const selectedDate = new Date(closeDateInput.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Reset time to start of day
+                
+                if (selectedDate < today) {
+                    e.preventDefault();
+                    errorMessage.textContent = '❌ Error: Deadline cannot be in the past. Please select a date from today onwards.';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    closeDateInput.focus();
+                    return false;
+                }
+            });
+            
+            // Add real-time validation when user changes the date
+            closeDateInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (selectedDate < today) {
+                    this.style.borderColor = '#dc3545';
+                    this.style.backgroundColor = '#fff5f5';
+                    
+                    // Show error message
+                    let errorMsg = this.parentNode.querySelector('.date-error');
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.className = 'date-error';
+                        errorMsg.style.color = '#dc3545';
+                        errorMsg.style.fontSize = '0.9rem';
+                        errorMsg.style.marginTop = '5px';
+                        errorMsg.style.fontWeight = '600';
+                        this.parentNode.appendChild(errorMsg);
+                    }
+                    errorMsg.textContent = '❌ Please select a date from today onwards';
+                } else {
+                    this.style.borderColor = '#00b4ff';
+                    this.style.backgroundColor = '#f8fbff';
+                    
+                    // Remove error message
+                    const errorMsg = this.parentNode.querySelector('.date-error');
+                    if (errorMsg) {
+                        errorMsg.remove();
+                    }
+                }
+            });
+            
+            // Phone number validation with country code
+            const contactPhoneInput = document.getElementById('contactPerson');
+            const countryCodeSelect = document.getElementById('countryCode');
+            
+            // Function to validate phone number
+            function validatePhoneNumber() {
+                const countryCode = countryCodeSelect.value;
+                const phoneNumber = contactPhoneInput.value;
+                const fullNumber = countryCode + ' ' + phoneNumber;
+                
+                // Remove all non-digit characters except spaces, hyphens, and parentheses
+                let cleanValue = phoneNumber.replace(/[^\d\s\-\(\)]/g, '');
+                
+                // Validate phone number format (any length)
+                const phoneRegex = /^[0-9]+$/;
+                const digitsOnly = cleanValue.replace(/[\s\-\(\)]/g, '');
+                
+                if (digitsOnly.length > 0 && !phoneRegex.test(digitsOnly)) {
+                    contactPhoneInput.style.borderColor = '#dc3545';
+                    contactPhoneInput.style.backgroundColor = '#fff5f5';
+                    
+                    // Show error message
+                    let errorMsg = contactPhoneInput.parentNode.querySelector('.phone-error');
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.style.color = '#dc3545';
+                        errorMsg.style.fontSize = '0.9rem';
+                        errorMsg.style.marginTop = '5px';
+                        errorMsg.style.fontWeight = '600';
+                        contactPhoneInput.parentNode.appendChild(errorMsg);
+                    }
+                    errorMsg.textContent = '❌ Please enter a valid phone number (digits only)';
+                } else if (digitsOnly.length > 0) {
+                    contactPhoneInput.style.borderColor = '#28a745';
+                    contactPhoneInput.style.backgroundColor = '#f8fff8';
+                    
+                    // Remove error message
+                    const errorMsg = contactPhoneInput.parentNode.querySelector('.phone-error');
+                    if (errorMsg) {
+                        errorMsg.remove();
+                    }
+                } else {
+                    contactPhoneInput.style.borderColor = '#e0e0e0';
+                    contactPhoneInput.style.backgroundColor = '#f8fbff';
+                    
+                    // Remove error message
+                    const errorMsg = contactPhoneInput.parentNode.querySelector('.phone-error');
+                    if (errorMsg) {
+                        errorMsg.remove();
+                    }
+                }
+            }
+            
+            // Add validation on form submission
+            form.addEventListener('submit', function(e) {
+                const countryCode = countryCodeSelect.value;
+                const phoneNumber = contactPhoneInput.value;
+                const digitsOnly = phoneNumber.replace(/[\s\-\(\)]/g, '');
+                
+                if (digitsOnly.length > 0 && !phoneRegex.test(digitsOnly)) {
+                    e.preventDefault();
+                    errorMessage.textContent = '❌ Error: Please enter a valid phone number (digits only)';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    contactPhoneInput.focus();
+                    return false;
+                }
+                
+                // Combine country code and phone number for submission only if phone number is provided
+                if (digitsOnly.length > 0) {
+                    const fullPhoneNumber = countryCode + ' ' + phoneNumber;
+                    contactPhoneInput.value = fullPhoneNumber;
+                } else {
+                    // Clear the field if no phone number is provided
+                    contactPhoneInput.value = '';
+                }
+            });
+            
+            // Real-time validation when user types
+            contactPhoneInput.addEventListener('input', function() {
+                // Remove all non-digit characters except spaces, hyphens, and parentheses
+                let value = this.value.replace(/[^\d\s\-\(\)]/g, '');
+                this.value = value;
+                
+                validatePhoneNumber();
+            });
+            
+            // Update validation when country code changes
+            countryCodeSelect.addEventListener('change', function() {
+                validatePhoneNumber();
             });
         });
     </script>

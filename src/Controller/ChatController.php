@@ -83,7 +83,7 @@ class ChatController extends AbstractController
         $msg->setSender($user);
         $msg->setReceiver($receiver);
         $msg->setContent($content);
-        $msg->setCreatedAt(new \DateTime());
+        $msg->setCreatedAt(new \DateTime('now', new \DateTimeZone('Africa/Tunis')));
         $em->persist($msg);
         $em->flush();
         return new JsonResponse(['success' => true]);
