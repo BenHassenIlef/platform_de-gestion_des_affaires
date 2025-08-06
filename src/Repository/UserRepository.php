@@ -53,12 +53,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     /**
      * @return User[]
      */
-
     public function findInactiveSince(\DateTime $date)
     {
         return $this->createQueryBuilder('u')
             ->where('u.lastActivity < :date OR u.lastActivity IS NULL')
             ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return User[]
+     */
+    public function findByRole(string $role): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.roles LIKE :role')
+            ->setParameter('role', '%' . $role . '%')
             ->getQuery()
             ->getResult();
     }

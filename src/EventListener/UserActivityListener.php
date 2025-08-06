@@ -18,7 +18,7 @@ class UserActivityListener
     {
         $user = $event->getAuthenticationToken()->getUser();
         if ($user instanceof \App\Entity\User) {
-            $user->setLastActivity(new \DateTime());
+            $user->setLastActivity(new \DateTime('now', new \DateTimeZone('Africa/Tunis')));
 
             $this->entityManager->persist($user);
             $this->entityManager->flush();

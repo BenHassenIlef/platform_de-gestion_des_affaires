@@ -47,6 +47,21 @@
                     {% if opportunity.description %}
                         <p><strong>Description:</strong> {{ opportunity.description }}</p>
                     {% endif %}
+                    
+                    {% if opportunity.opportunityFiles|length > 0 %}
+                        <div style="background: #e8f5e8; padding: 12px; border-radius: 8px; margin-top: 12px; border: 2px solid #28a745;">
+                            <h4 style="color: #28a745; margin: 0 0 8px 0; font-size: 1rem;">📄 Attached PDF Documents:</h4>
+                            {% for file in opportunity.opportunityFiles %}
+                                <div style="background: white; padding: 8px; border-radius: 6px; margin-bottom: 6px; border: 1px solid #ddd;">
+                                    <div style="font-weight: 600; color: #333; font-size: 0.9rem;">{{ file.originalFilename }}</div>
+                                    <div style="font-size: 0.8rem; color: #666;">
+                                        Size: {{ (file.size / 1024)|round(1) }} KB | 
+                                        Uploaded: {{ file.uploadedAt|date('Y-m-d H:i') }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 {% endif %}
             </div>
             

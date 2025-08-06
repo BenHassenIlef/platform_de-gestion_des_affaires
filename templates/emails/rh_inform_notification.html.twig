@@ -12,6 +12,38 @@
         .user-info { background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 15px 0; }
         .opportunities { background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; border-left: 4px solid #00b4ff; }
         .footer { text-align: center; color: #666; font-size: 12px; margin-top: 20px; }
+        .download-bar { 
+            background: #e8f5e8; 
+            border: 2px solid #4CAF50; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin: 20px 0; 
+            cursor: pointer; 
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .download-bar:hover { 
+            opacity: 0.8; 
+        }
+        .download-bar a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+        .download-icon {
+            color: #666;
+            font-size: 20px;
+        }
+        .download-text {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +84,13 @@
             </div>
             
             <p><strong>Action Required:</strong> Please log into the system to review and make decisions on these opportunities.</p>
+        </div>
+        
+        <div class="download-bar">
+            <a href="{{ app_url }}/admin/opportunities" target="_blank">
+                <span class="download-icon">📄</span>
+                <span class="download-text">Accéder aux Opportunités</span>
+            </a>
         </div>
         
         <div class="footer">

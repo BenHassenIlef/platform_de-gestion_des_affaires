@@ -4,6 +4,12 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    # Set timezone to Tunisia
+    app.timezone: 'Africa/Tunis'
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    app.admin_email: 'benhassenilef20@gmail.com'
+    app.email_sender: 'benhassenilef20@gmail.com'
 
 services:
   # default configuration for services in *this* file
@@ -21,9 +27,3 @@ services:
       - "../src/DependencyInjection/"
       - "../src/Entity/"
       - "../src/Kernel.php"
-
-parameters:
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-    app.admin_email: 'benhassenilef20@gmail.com'
-    app.email_sender: 'benhassenilef20@gmail.com'

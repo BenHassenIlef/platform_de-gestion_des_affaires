@@ -32,7 +32,7 @@ class SendProjectDeadlineNotificationTask
 
     public function __invoke(): Response
 {
-    $dn = new \DateTime();
+            $dn = new \DateTime('now', new \DateTimeZone('Africa/Tunis'));
     $dn->modify('+7 day');
 
     $projets = $this->projetRepository->findProjetsDeadline($dn);

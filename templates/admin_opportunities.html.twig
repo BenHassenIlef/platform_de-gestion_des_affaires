@@ -184,22 +184,24 @@
                                     {% endif %}
                                 </span>
                             </div>
+                            
+                            {# Suppression de la section PDFs uploadés par RH #}
                         </div>
                         {% if opp.description %}
                             <div class="opportunity-description">{{ opp.description }}</div>
                         {% endif %}
                         <div class="decision-form">
-                            <form method="post" action="{{ path('admin_update_decision', {'id': opp.id}) }}">
-                                <label for="decision_{{ opp.id }}" style="font-weight: 600; color: #00b4ff; margin-bottom: 8px; display: block;">🎯 Decision:</label>
-                                <select name="decision" id="decision_{{ opp.id }}" class="decision-select" onchange="this.form.submit()">
-                                    <option value="" {% if not opp.status or opp.status == '' %}selected{% endif %}>Select...</option>
-                                    <option value="approved" {% if opp.status == 'approved' %}selected{% endif %}>✅ Approved</option>
-                                    <option value="rejected" {% if opp.status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
-                                    <option value="pending" {% if opp.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
-                                    <option value="under_review" {% if opp.status == 'under_review' %}selected{% endif %}>🔍 Under Review</option>
-                                </select>
-                            </form>
+                            <label for="decision_{{ opp.id }}" style="font-weight: 600; color: #00b4ff; margin-bottom: 8px; display: block;">🎯 Decision:</label>
+                            <select id="decision_{{ opp.id }}" class="decision-select" data-opportunity-id="{{ opp.id }}">
+                                <option value="" {% if not opp.status or opp.status == '' %}selected{% endif %}>Select...</option>
+                                <option value="approved" {% if opp.status == 'approved' %}selected{% endif %}>✅ Approved</option>
+                                <option value="rejected" {% if opp.status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
+                                <option value="pending" {% if opp.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
+                                <option value="under_review" {% if opp.status == 'under_review' %}selected{% endif %}>🔍 Under Review</option>
+                            </select>
                         </div>
+                        
+
                     </div>
                 {% else %}
                     <div style="text-align: center; color: #666; font-size: 1.1rem;">No opportunities found.</div>
@@ -208,4 +210,145 @@
         </section>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const decisionSelects = document.querySelectorAll('.decision-select');
+        
+        decisionSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                const opportunityId = this.getAttribute('data-opportunity-id');
+                const decision = this.value;
+                
+                if (decision) {
+                    updateOpportunityDecision(opportunityId, decision, this);
+                }
+            });
+        });
+        
+        // Load RH uploaded PDFs for all opportunities
+        const allOpportunities = document.querySelectorAll('.opportunity-card');
+        allOpportunities.forEach(card => {
+            const opportunityId = card.querySelector('.decision-select').getAttribute('data-opportunity-id');
+            if (opportunityId) {
+                loadRhPdfFiles(opportunityId);
+            }
+        });
+    });
+    
+    function updateOpportunityDecision(opportunityId, decision, selectElement) {
+        fetch('{{ path('admin_update_opportunity_decision_ajax') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                opportunityId: opportunityId,
+                decision: decision
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(`Decision updated: ${selectElement.options[selectElement.selectedIndex].text}`, 'success');
+                
+
+                
+                // Optionally disable the select after decision
+                selectElement.disabled = true;
+                selectElement.style.opacity = '0.7';
+            } else {
+                showNotification('Error updating decision: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error updating decision', 'error');
+        });
+    }
+    
+    function loadRhPdfFiles(opportunityId) {
+        fetch(`/admin/get-rh-pdf-files/${opportunityId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.files.length > 0) {
+                const pdfList = document.querySelector(`.rh-uploaded-pdfs[data-opportunity-id="${opportunityId}"]`);
+                if (pdfList) {
+                    pdfList.innerHTML = data.files.map(file => `
+                        <div class="rh-pdf-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: white; border-radius: 6px; margin-bottom: 6px; border: 1px solid #ddd;">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; color: #333; font-size: 0.9rem;">${file.originalFilename}</div>
+                                <div style="font-size: 0.8rem; color: #666;">
+                                    Uploaded by: ${file.uploadedBy} | 
+                                    Size: ${(file.fileSize / 1024).toFixed(1)} KB | 
+                                    Date: ${file.uploadedAt}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 4px;">
+                                <a href="/admin/download-rh-pdf/${file.id}" class="btn-download-rh-pdf" style="background: #2196f3; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; text-decoration: none;">📥</a>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } else {
+                const pdfList = document.querySelector(`.rh-uploaded-pdfs[data-opportunity-id="${opportunityId}"]`);
+                if (pdfList) {
+                    pdfList.innerHTML = '<div style="color: #666; font-size: 0.9rem; text-align: center; padding: 8px;">No PDFs uploaded by RH yet</div>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading RH PDF files:', error);
+            const pdfList = document.querySelector(`.rh-uploaded-pdfs[data-opportunity-id="${opportunityId}"]`);
+            if (pdfList) {
+                pdfList.innerHTML = '<div style="color: #dc3545; font-size: 0.9rem; text-align: center; padding: 8px;">Error loading PDFs</div>';
+            }
+        });
+    }
+    
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        if (type === 'success') {
+            notification.style.background = 'linear-gradient(90deg, #28a745, #20c997)';
+        } else if (type === 'error') {
+            notification.style.background = 'linear-gradient(90deg, #dc3545, #e74c3c)';
+        } else {
+            notification.style.background = 'linear-gradient(90deg, #17a2b8, #38b6ff)';
+        }
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    
+    // CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
 {% endblock %} 
